@@ -1,0 +1,24 @@
+{
+	"name": "DS_Test1_BLOB_Generic",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_BLOB_addufrain1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Test1"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "test1"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"quoteChar": "\""
+		},
+		"schema": []
+	}
+}
