@@ -1,0 +1,27 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "dev-o2"
+		},
+		"LN_BLOB_addufrain1_connectionString": {
+			"value": ""
+		},
+		"LN_REST_ListOfFiles_password": {
+			"value": ""
+		},
+		"LN_SQL_DevDatahub_connectionString": {
+			"value": ""
+		},
+		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
+			"value": "https://DufrainVault.vault.azure.net/"
+		},
+		"LN_REST_ListOfFiles_properties_typeProperties_url": {
+			"value": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-07"
+		},
+		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
+			"value": "Dufrain"
+		}
+	}
+}

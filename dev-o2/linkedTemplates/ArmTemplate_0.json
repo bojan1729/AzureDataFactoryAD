@@ -1,0 +1,889 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "dev-o2"
+		},
+		"LN_BLOB_addufrain1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_BLOB_addufrain1'"
+		},
+		"LN_REST_ListOfFiles_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
+		},
+		"LN_SQL_DevDatahub_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
+		},
+		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://DufrainVault.vault.azure.net/"
+		},
+		"LN_REST_ListOfFiles_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-07"
+		},
+		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_KV_DufrainVault')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('LN_KV_DufrainVault_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/OnPremRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"description": "Our on premise runtime",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/UKSouthRuntime')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "Managed",
+				"description": "Our primary runtime",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "UK South",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/zzzwait')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_BLOB_addufrain1')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobStorage",
+				"typeProperties": {
+					"connectionString": "[parameters('LN_BLOB_addufrain1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "UKSouthRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_REST_ListOfFiles')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('LN_REST_ListOfFiles_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('LN_REST_ListOfFiles_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LN_REST_ListOfFiles_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "UKSouthRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_SQL_DevDatahub')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('LN_SQL_DevDatahub_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LN_KV_DufrainVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "dev-db-password"
+					}
+				},
+				"connectVia": {
+					"referenceName": "UKSouthRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DA_SQL_Generic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_CsvSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_FileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().PDS_FileName, '.CSV')",
+							"type": "Expression"
+						},
+						"folderPath": "csv",
+						"container": "testo2"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": ""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_CsvSource')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_FileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().PDS_FileName, '.CSV')",
+							"type": "Expression"
+						},
+						"folderPath": "csv",
+						"container": "testo2"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_FileList')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_FileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat('FileList',dataset().PDS_FileName, '.json')",
+							"type": "Expression"
+						},
+						"container": "testo2"
+					}
+				},
+				"schema": {
+					"type": "object",
+					"properties": {
+						"fileRefID": {
+							"type": "string"
+						},
+						"fileName": {
+							"type": "string"
+						},
+						"importDate": {
+							"type": "string"
+						}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_Zip')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_FileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().PDS_FileName, '.ZIP')",
+							"type": "Expression"
+						},
+						"folderPath": "zip",
+						"container": "testo2"
+					},
+					"columnDelimiter": ",",
+					"compressionCodec": "ZipDeflate",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": ""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_FileLoadDefinition')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FileRefID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ImportDate",
+						"type": "date"
+					},
+					{
+						"name": "FileType",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SinkSchema",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SinkTable",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FileSeqno",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "hubo2",
+					"table": "FileLoadDefinition"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_StageTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_TableSchema": {
+						"type": "string"
+					},
+					"PDS_TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().PDS_TableSchema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@concat('stg_', dataset().PDS_TableName)",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_TempTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_TableSchema": {
+						"type": "string"
+					},
+					"PDS_TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().PDS_TableSchema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@concat('tmp_', dataset().PDS_TableName)",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ListOfFiles')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "ListOfFiles_2020-10-07.json",
+						"container": "test1"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Unzip')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "demo2.csv",
+						"folderPath": "unzip",
+						"container": "test1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": ""
+				},
+				"schema": [
+					{
+						"name": "\"Group Code\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Corporate Code\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Account No\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Agreement No\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Subscription Number\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Cost Centre\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Network Serial Number\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Tariff\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Call class\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Call class Description\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Call Landing date\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Dialed Number\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Call date\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Call time\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Bundled Call?\"",
+						"type": "String"
+					},
+					{
+						"name": "\"SP Billed Call Price\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Service\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Pre-Bundle Actual Duration\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Pre-Bundled SP Value\"",
+						"type": "String"
+					},
+					{
+						"name": "\"SP Retail Call Price\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Discount Value\"",
+						"type": "String"
+					},
+					{
+						"name": "\"SCD Country of Call Origin\"",
+						"type": "String"
+					},
+					{
+						"name": "\"SCD Call Direction\"",
+						"type": "String"
+					},
+					{
+						"name": "\"SCD Networks Call Indicator\"",
+						"type": "String"
+					},
+					{
+						"name": "\"GPRS Destination\"",
+						"type": "String"
+					},
+					{
+						"name": "\"GPRS Product Code\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Uplink Volume\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Downlink Volume\"",
+						"type": "String"
+					},
+					{
+						"name": "\"Number of Contexts\"",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Zip')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "D00533_263_Aerial_Subscribers_CC_Bar_Report_20201007130016.ZIP",
+						"folderPath": "20201007zip",
+						"container": "test1"
+					},
+					"columnDelimiter": ",",
+					"compressionCodec": "ZipDeflate",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": ""
+				},
+				"schema": [
+					{
+						"name": "ICAO",
+						"type": "String"
+					},
+					{
+						"name": "IATA",
+						"type": "String"
+					},
+					{
+						"name": "MAKER",
+						"type": "String"
+					},
+					{
+						"name": "DESCRIPTION",
+						"type": "String"
+					}
+				]
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_REST_ListOfFiles')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_REST_ListOfFiles",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_REST_ListOfFiles')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_SQL_DevDatahub')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "Group_Code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Corporate_Code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Account_No",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Agreement_No",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Subscription_Number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Cost_Centre",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Network_Serial_Number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Tariff",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Call_class",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Call_class_Description",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Call_Landing_date",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Dialed_Number",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Call_date",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Call_time",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Bundled_Call",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SP_Billed_Call_Price",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Service",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Pre_Bundle_Actual_Duration",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Pre_Bundled_SP_Value",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SP_Retail_Call_Price",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Discount_Value",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SCD_Country_of_Call_Origin",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SCD_Call_Direction",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SCD_Networks_Call_Indicator",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GPRS_Destination",
+						"type": "nvarchar"
+					},
+					{
+						"name": "GPRS_Product_Code",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Uplink_Volume",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Downlink_Volume",
+						"type": "nvarchar"
+					},
+					{
+						"name": "Number_of_Contexts",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "test",
+					"table": "Stage_CDR"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
+		}
+	]
+}
