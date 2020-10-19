@@ -1,0 +1,102 @@
+{
+	"name": "DS_Test1_ONPREM_Datastore_SubscriberCCBar",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_ONPREM_vmdevdb",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Test1"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [
+			{
+				"name": "SubscriberCCBarID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "Account",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CustomerName",
+				"type": "varchar"
+			},
+			{
+				"name": "Connections",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "TopCode",
+				"type": "varchar"
+			},
+			{
+				"name": "TopLevel",
+				"type": "varchar"
+			},
+			{
+				"name": "AccountUnderTopCode",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "CCProcedure",
+				"type": "varchar"
+			},
+			{
+				"name": "CCStage",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EventDescription",
+				"type": "varchar"
+			},
+			{
+				"name": "RaisedDateTime",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ActRep",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ActRepDesc",
+				"type": "varchar"
+			},
+			{
+				"name": "CustomerType",
+				"type": "varchar"
+			},
+			{
+				"name": "BalanceToRecover",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "AddedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "RemovedDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			}
+		],
+		"typeProperties": {
+			"schema": "PI",
+			"table": "SubscriberCCBar"
+		}
+	}
+}
