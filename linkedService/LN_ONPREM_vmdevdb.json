@@ -1,0 +1,16 @@
+{
+	"name": "LN_ONPREM_vmdevdb",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "integrated security=False;encrypt=True;connection timeout=30;data source=vm-devdb;initial catalog=Datastore;user id=AD\\Bojan.Ajlec",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5NGJlYThhOS0zNmUwLTRmMjgtODRlOS0xMmNhOTc3YjZiNmYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "OnPremRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
