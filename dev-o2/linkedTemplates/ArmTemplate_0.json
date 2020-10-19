@@ -19,6 +19,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
 		},
+		"LN_ONPREM_vmdevdb_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_vmdevdb'"
+		},
+		"LN_ONPREM_vmdevdb_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LN_ONPREM_vmdevdb'"
+		},
 		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://DufrainVault.vault.azure.net/"
@@ -30,12 +38,39 @@
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
+		},
+		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "AD\\Bojan.Ajlec"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/zzzwait')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/LN_KV_DufrainVault')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
@@ -77,29 +112,6 @@
 						}
 					}
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/zzzwait')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Wait1",
-						"type": "Wait",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"waitTimeInSeconds": 1
-						}
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": []
 			},
 			"dependsOn": []
 		},
@@ -174,6 +186,30 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_ONPREM_vmdevdb')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('LN_ONPREM_vmdevdb_connectionString')]",
+					"userName": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LN_ONPREM_vmdevdb_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "OnPremRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremRuntime')]"
 			]
 		},
 		{
@@ -742,147 +778,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_REST_ListOfFiles')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_SQL_DevDatahub')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Group_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Corporate_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Account_No",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Agreement_No",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Subscription_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Cost_Centre",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Network_Serial_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Tariff",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_class",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_class_Description",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_Landing_date",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Dialed_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_date",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_time",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Bundled_Call",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SP_Billed_Call_Price",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Service",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Pre_Bundle_Actual_Duration",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Pre_Bundled_SP_Value",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SP_Retail_Call_Price",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Discount_Value",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Country_of_Call_Origin",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Call_Direction",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Networks_Call_Indicator",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GPRS_Destination",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GPRS_Product_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Uplink_Volume",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Downlink_Volume",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Number_of_Contexts",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "test",
-					"table": "Stage_CDR"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
 			]
 		}
 	]

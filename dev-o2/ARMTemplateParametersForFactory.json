@@ -14,6 +14,12 @@
 		"LN_SQL_DevDatahub_connectionString": {
 			"value": ""
 		},
+		"LN_ONPREM_vmdevdb_connectionString": {
+			"value": ""
+		},
+		"LN_ONPREM_vmdevdb_password": {
+			"value": ""
+		},
 		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 			"value": "https://DufrainVault.vault.azure.net/"
 		},
@@ -22,6 +28,9 @@
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"value": "Dufrain"
+		},
+		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
+			"value": "AD\\Bojan.Ajlec"
 		}
 	}
 }

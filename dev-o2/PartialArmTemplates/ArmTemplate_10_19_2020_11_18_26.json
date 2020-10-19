@@ -1,0 +1,148 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "dev-o2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_ONPREM_vmdevdb",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "SubscriberCCBarID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Account",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "Connections",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TopCode",
+						"type": "varchar"
+					},
+					{
+						"name": "TopLevel",
+						"type": "varchar"
+					},
+					{
+						"name": "AccountUnderTopCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CCProcedure",
+						"type": "varchar"
+					},
+					{
+						"name": "CCStage",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "EventDescription",
+						"type": "varchar"
+					},
+					{
+						"name": "RaisedDateTime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ActRep",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ActRepDesc",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerType",
+						"type": "varchar"
+					},
+					{
+						"name": "BalanceToRecover",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "AddedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "RemovedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "PI",
+					"table": "SubscriberCCBar"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "test1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		}
+	]
+}

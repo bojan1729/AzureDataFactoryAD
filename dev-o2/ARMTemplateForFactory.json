@@ -19,6 +19,14 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
 		},
+		"LN_ONPREM_vmdevdb_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_vmdevdb'"
+		},
+		"LN_ONPREM_vmdevdb_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LN_ONPREM_vmdevdb'"
+		},
 		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://DufrainVault.vault.azure.net/"
@@ -30,6 +38,10 @@
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
+		},
+		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "AD\\Bojan.Ajlec"
 		}
 	},
 	"variables": {
@@ -1905,6 +1917,29 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/zzzwait')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DA_SQL_Generic')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2731,27 +2766,164 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/zzzwait')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
+			"name": "[concat(parameters('factoryName'), '/LN_ONPREM_vmdevdb')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"activities": [
-					{
-						"name": "Wait1",
-						"type": "Wait",
-						"dependsOn": [],
-						"userProperties": [],
-						"typeProperties": {
-							"waitTimeInSeconds": 1
-						}
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('LN_ONPREM_vmdevdb_connectionString')]",
+					"userName": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LN_ONPREM_vmdevdb_password')]"
 					}
-				],
+				},
+				"connectVia": {
+					"referenceName": "OnPremRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_ONPREM_vmdevdb",
+					"type": "LinkedServiceReference"
+				},
 				"folder": {
 					"name": "Test1"
 				},
-				"annotations": []
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "SubscriberCCBarID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Account",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "Connections",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TopCode",
+						"type": "varchar"
+					},
+					{
+						"name": "TopLevel",
+						"type": "varchar"
+					},
+					{
+						"name": "AccountUnderTopCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CCProcedure",
+						"type": "varchar"
+					},
+					{
+						"name": "CCStage",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "EventDescription",
+						"type": "varchar"
+					},
+					{
+						"name": "RaisedDateTime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ActRep",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ActRepDesc",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerType",
+						"type": "varchar"
+					},
+					{
+						"name": "BalanceToRecover",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "AddedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "RemovedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "PI",
+					"table": "SubscriberCCBar"
+				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_ONPREM_vmdevdb')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "test1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
 		}
 	]
 }
