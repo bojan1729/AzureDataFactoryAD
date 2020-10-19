@@ -1,0 +1,46 @@
+{
+	"name": "DS_Test1_BLOB_Zip",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_BLOB_addufrain1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Test1"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "D00533_263_Aerial_Subscribers_CC_Bar_Report_20201007130016.ZIP",
+				"folderPath": "20201007zip",
+				"container": "test1"
+			},
+			"columnDelimiter": ",",
+			"compressionCodec": "ZipDeflate",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": ""
+		},
+		"schema": [
+			{
+				"name": "ICAO",
+				"type": "String"
+			},
+			{
+				"name": "IATA",
+				"type": "String"
+			},
+			{
+				"name": "MAKER",
+				"type": "String"
+			},
+			{
+				"name": "DESCRIPTION",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

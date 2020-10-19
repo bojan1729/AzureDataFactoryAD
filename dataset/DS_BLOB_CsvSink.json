@@ -1,0 +1,36 @@
+{
+	"name": "DS_BLOB_CsvSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_BLOB_addufrain1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"PDS_FileName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Dev1"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat(dataset().PDS_FileName, '.CSV')",
+					"type": "Expression"
+				},
+				"folderPath": "csv",
+				"container": "testo2"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": ""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

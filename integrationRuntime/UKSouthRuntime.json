@@ -1,0 +1,17 @@
+{
+	"name": "UKSouthRuntime",
+	"properties": {
+		"type": "Managed",
+		"description": "Our primary runtime",
+		"typeProperties": {
+			"computeProperties": {
+				"location": "UK South",
+				"dataFlowProperties": {
+					"computeType": "General",
+					"coreCount": 8,
+					"timeToLive": 0
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,34 @@
+{
+	"name": "DS_SQL_StageTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_SQL_DevDatahub",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"PDS_TableSchema": {
+				"type": "string"
+			},
+			"PDS_TableName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Dev1"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().PDS_TableSchema",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@concat('stg_', dataset().PDS_TableName)",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,11 @@
+{
+	"name": "LN_KV_DufrainVault",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://DufrainVault.vault.azure.net/"
+		}
+	}
+}

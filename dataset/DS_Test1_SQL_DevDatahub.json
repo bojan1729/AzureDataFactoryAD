@@ -1,0 +1,137 @@
+{
+	"name": "DS_Test1_SQL_DevDatahub",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_SQL_DevDatahub",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Test1"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "Group_Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Corporate_Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Account_No",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Agreement_No",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Subscription_Number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Cost_Centre",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Network_Serial_Number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Tariff",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Call_class",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Call_class_Description",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Call_Landing_date",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Dialed_Number",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Call_date",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Call_time",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Bundled_Call",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SP_Billed_Call_Price",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Service",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Pre_Bundle_Actual_Duration",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Pre_Bundled_SP_Value",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SP_Retail_Call_Price",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Discount_Value",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCD_Country_of_Call_Origin",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCD_Call_Direction",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SCD_Networks_Call_Indicator",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GPRS_Destination",
+				"type": "nvarchar"
+			},
+			{
+				"name": "GPRS_Product_Code",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Uplink_Volume",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Downlink_Volume",
+				"type": "nvarchar"
+			},
+			{
+				"name": "Number_of_Contexts",
+				"type": "nvarchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "test",
+			"table": "Stage_CDR"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

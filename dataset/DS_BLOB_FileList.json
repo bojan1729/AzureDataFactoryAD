@@ -1,0 +1,44 @@
+{
+	"name": "DS_BLOB_FileList",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_BLOB_addufrain1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"PDS_FileName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Dev1"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat('FileList',dataset().PDS_FileName, '.json')",
+					"type": "Expression"
+				},
+				"container": "testo2"
+			}
+		},
+		"schema": {
+			"type": "object",
+			"properties": {
+				"fileRefID": {
+					"type": "string"
+				},
+				"fileName": {
+					"type": "string"
+				},
+				"importDate": {
+					"type": "string"
+				}
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

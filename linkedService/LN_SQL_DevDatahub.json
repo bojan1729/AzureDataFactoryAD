@@ -1,0 +1,23 @@
+{
+	"name": "LN_SQL_DevDatahub",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureSqlDatabase",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=addufrain.database.windows.net;Initial Catalog=dev-datahub;User ID=datafactory",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LN_KV_DufrainVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "dev-db-password"
+			}
+		},
+		"connectVia": {
+			"referenceName": "UKSouthRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

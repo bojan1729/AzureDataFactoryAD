@@ -1,0 +1,16 @@
+{
+	"name": "DA_SQL_Generic",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_SQL_DevDatahub",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dev1"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

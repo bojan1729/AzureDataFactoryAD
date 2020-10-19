@@ -1,0 +1,51 @@
+{
+	"name": "DS_SQL_FileLoadDefinition",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_SQL_DevDatahub",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dev1"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "FileRefID",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FileName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ImportDate",
+				"type": "date"
+			},
+			{
+				"name": "FileType",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "SinkSchema",
+				"type": "nvarchar"
+			},
+			{
+				"name": "SinkTable",
+				"type": "nvarchar"
+			},
+			{
+				"name": "FileSeqno",
+				"type": "int",
+				"precision": 10
+			}
+		],
+		"typeProperties": {
+			"schema": "hubo2",
+			"table": "FileLoadDefinition"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
