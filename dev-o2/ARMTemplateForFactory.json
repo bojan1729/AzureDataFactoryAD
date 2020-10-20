@@ -1118,7 +1118,7 @@
 									}
 								},
 								{
-									"name": "Hash Key and Dedup",
+									"name": "Hash Key",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
