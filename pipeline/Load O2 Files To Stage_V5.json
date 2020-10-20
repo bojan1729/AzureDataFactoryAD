@@ -960,7 +960,7 @@
 									},
 									"PipelineRunID": {
 										"value": {
-											"value": "@pipeline().RunId",
+											"value": "@pipeline().parameters.PPL_RunID",
 											"type": "Expression"
 										},
 										"type": "String"
