@@ -11,14 +11,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_BLOB_addufrain1'"
 		},
-		"LN_REST_ListOfFiles_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
-		},
-		"LN_SQL_DevDatahub_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
-		},
 		"LN_ONPREM_vmdevdb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_vmdevdb'"
@@ -27,9 +19,21 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LN_ONPREM_vmdevdb'"
 		},
+		"LN_REST_ListOfFiles_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
+		},
+		"LN_SQL_DevDatahub_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
+		},
 		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://DufrainVault.vault.azure.net/"
+		},
+		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "AD\\Bojan.Ajlec"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_url": {
 			"type": "string",
@@ -38,10 +42,6 @@
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
-		},
-		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "AD\\Bojan.Ajlec"
 		}
 	},
 	"variables": {
@@ -135,6 +135,30 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LN_ONPREM_vmdevdb')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('LN_ONPREM_vmdevdb_connectionString')]",
+					"userName": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LN_ONPREM_vmdevdb_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "OnPremRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LN_REST_ListOfFiles')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -186,30 +210,6 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LN_ONPREM_vmdevdb')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('LN_ONPREM_vmdevdb_connectionString')]",
-					"userName": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('LN_ONPREM_vmdevdb_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "OnPremRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremRuntime')]"
 			]
 		},
 		{
@@ -534,6 +534,36 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "test1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ListOfFiles')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -757,27 +787,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_REST_ListOfFiles')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_REST_ListOfFiles",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_REST_ListOfFiles')]"
 			]
 		}
 	]

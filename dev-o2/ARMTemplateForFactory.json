@@ -11,14 +11,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_BLOB_addufrain1'"
 		},
-		"LN_REST_ListOfFiles_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
-		},
-		"LN_SQL_DevDatahub_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
-		},
 		"LN_ONPREM_vmdevdb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_vmdevdb'"
@@ -27,9 +19,21 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LN_ONPREM_vmdevdb'"
 		},
+		"LN_REST_ListOfFiles_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
+		},
+		"LN_SQL_DevDatahub_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
+		},
 		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://DufrainVault.vault.azure.net/"
+		},
+		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "AD\\Bojan.Ajlec"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_url": {
 			"type": "string",
@@ -38,16 +42,83 @@
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
-		},
-		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "AD\\Bojan.Ajlec"
 		}
 	},
 	"variables": {
 		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
 	},
 	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Copy oprem to blob')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "DelimitedTextSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "DelimitedTextWriteSettings",
+									"quoteAllText": true,
+									"fileExtension": ".csv"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Test1_ONPREM_Datastore_SubscriberCCBar",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Test1_BLOB_Generic",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Generic')]"
+			]
+		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Get List Of Files')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
@@ -1376,7 +1447,7 @@
 								},
 								"ErrorMessage": {
 									"value": {
-										"value": "ERR - see FileLog",
+										"value": "ERR Run - see FileLog",
 										"type": "Expression"
 									},
 									"type": "String"
@@ -2261,6 +2332,36 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "test1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ListOfFiles')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2487,6 +2588,113 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_ONPREM_vmdevdb",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [
+					{
+						"name": "SubscriberCCBarID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Account",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CustomerName",
+						"type": "varchar"
+					},
+					{
+						"name": "Connections",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TopCode",
+						"type": "varchar"
+					},
+					{
+						"name": "TopLevel",
+						"type": "varchar"
+					},
+					{
+						"name": "AccountUnderTopCode",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "CCProcedure",
+						"type": "varchar"
+					},
+					{
+						"name": "CCStage",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "EventDescription",
+						"type": "varchar"
+					},
+					{
+						"name": "RaisedDateTime",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ActRep",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ActRepDesc",
+						"type": "varchar"
+					},
+					{
+						"name": "CustomerType",
+						"type": "varchar"
+					},
+					{
+						"name": "BalanceToRecover",
+						"type": "decimal",
+						"precision": 10,
+						"scale": 2
+					},
+					{
+						"name": "AddedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "RemovedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "PI",
+					"table": "SubscriberCCBar"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_ONPREM_vmdevdb')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_Test1_REST_ListOfFiles')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2681,6 +2889,30 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LN_ONPREM_vmdevdb')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('LN_ONPREM_vmdevdb_connectionString')]",
+					"userName": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('LN_ONPREM_vmdevdb_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "OnPremRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremRuntime')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LN_REST_ListOfFiles')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -2764,238 +2996,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/LN_ONPREM_vmdevdb')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "SqlServer",
-				"typeProperties": {
-					"connectionString": "[parameters('LN_ONPREM_vmdevdb_connectionString')]",
-					"userName": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]",
-					"password": {
-						"type": "SecureString",
-						"value": "[parameters('LN_ONPREM_vmdevdb_password')]"
-					}
-				},
-				"connectVia": {
-					"referenceName": "OnPremRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremRuntime')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_ONPREM_vmdevdb",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "SubscriberCCBarID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Account",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CustomerName",
-						"type": "varchar"
-					},
-					{
-						"name": "Connections",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TopCode",
-						"type": "varchar"
-					},
-					{
-						"name": "TopLevel",
-						"type": "varchar"
-					},
-					{
-						"name": "AccountUnderTopCode",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CCProcedure",
-						"type": "varchar"
-					},
-					{
-						"name": "CCStage",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "EventDescription",
-						"type": "varchar"
-					},
-					{
-						"name": "RaisedDateTime",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "ActRep",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ActRepDesc",
-						"type": "varchar"
-					},
-					{
-						"name": "CustomerType",
-						"type": "varchar"
-					},
-					{
-						"name": "BalanceToRecover",
-						"type": "decimal",
-						"precision": 10,
-						"scale": 2
-					},
-					{
-						"name": "AddedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "RemovedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "PI",
-					"table": "SubscriberCCBar"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_ONPREM_vmdevdb')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Copy oprem to blob')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Test1_ONPREM_Datastore_SubscriberCCBar",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_Generic",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Generic')]"
-			]
 		}
 	]
 }

@@ -11,14 +11,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_BLOB_addufrain1'"
 		},
-		"LN_REST_ListOfFiles_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
-		},
-		"LN_SQL_DevDatahub_connectionString": {
-			"type": "secureString",
-			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
-		},
 		"LN_ONPREM_vmdevdb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_vmdevdb'"
@@ -27,9 +19,21 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LN_ONPREM_vmdevdb'"
 		},
+		"LN_REST_ListOfFiles_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
+		},
+		"LN_SQL_DevDatahub_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
+		},
 		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://DufrainVault.vault.azure.net/"
+		},
+		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "AD\\Bojan.Ajlec"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_url": {
 			"type": "string",
@@ -38,10 +42,6 @@
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
-		},
-		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "AD\\Bojan.Ajlec"
 		},
 		"containerUri": {
 			"type": "string",
@@ -73,29 +73,29 @@
 					"LN_BLOB_addufrain1_connectionString": {
 						"value": "[parameters('LN_BLOB_addufrain1_connectionString')]"
 					},
-					"LN_REST_ListOfFiles_password": {
-						"value": "[parameters('LN_REST_ListOfFiles_password')]"
-					},
-					"LN_SQL_DevDatahub_connectionString": {
-						"value": "[parameters('LN_SQL_DevDatahub_connectionString')]"
-					},
 					"LN_ONPREM_vmdevdb_connectionString": {
 						"value": "[parameters('LN_ONPREM_vmdevdb_connectionString')]"
 					},
 					"LN_ONPREM_vmdevdb_password": {
 						"value": "[parameters('LN_ONPREM_vmdevdb_password')]"
 					},
+					"LN_REST_ListOfFiles_password": {
+						"value": "[parameters('LN_REST_ListOfFiles_password')]"
+					},
+					"LN_SQL_DevDatahub_connectionString": {
+						"value": "[parameters('LN_SQL_DevDatahub_connectionString')]"
+					},
 					"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 						"value": "[parameters('LN_KV_DufrainVault_properties_typeProperties_baseUrl')]"
+					},
+					"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
+						"value": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]"
 					},
 					"LN_REST_ListOfFiles_properties_typeProperties_url": {
 						"value": "[parameters('LN_REST_ListOfFiles_properties_typeProperties_url')]"
 					},
 					"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 						"value": "[parameters('LN_REST_ListOfFiles_properties_typeProperties_userName')]"
-					},
-					"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
-						"value": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]"
 					}
 				}
 			},
