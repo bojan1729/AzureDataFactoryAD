@@ -1008,7 +1008,20 @@
 							"typeProperties": {
 								"dataset": {
 									"referenceName": "DS_BLOB_CsvSink",
-									"type": "DatasetReference"
+									"type": "DatasetReference",
+									"parameters": {
+										"PDS_FileName": {
+											"value": "@{item().FileName}",
+											"type": "Expression"
+										}
+									}
+								},
+								"logStorageSettings": {
+									"linkedServiceName": {
+										"referenceName": "LN_BLOB_addufrain1",
+										"type": "LinkedServiceReference"
+									},
+									"path": "testo2"
 								},
 								"enableLogging": true,
 								"storeSettings": {
