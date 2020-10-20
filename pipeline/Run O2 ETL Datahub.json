@@ -94,7 +94,7 @@
 						"partitionOption": "None"
 					},
 					"dataset": {
-						"referenceName": "DA_SQL_Generic",
+						"referenceName": "DS_SQL_Generic",
 						"type": "DatasetReference"
 					}
 				}

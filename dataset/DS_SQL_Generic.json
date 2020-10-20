@@ -1,5 +1,5 @@
 {
-	"name": "DA_SQL_Generic",
+	"name": "DS_SQL_Generic",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LN_SQL_DevDatahub",
