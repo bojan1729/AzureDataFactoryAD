@@ -1173,6 +1173,50 @@
 										"referenceName": "LN_SQL_DevDatahub",
 										"type": "LinkedServiceReference"
 									}
+								},
+								{
+									"name": "Delete CSV",
+									"type": "Delete",
+									"dependsOn": [
+										{
+											"activity": "Hash Key",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "DS_BLOB_CsvSink",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileName": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												}
+											}
+										},
+										"logStorageSettings": {
+											"linkedServiceName": {
+												"referenceName": "LN_BLOB_addufrain1",
+												"type": "LinkedServiceReference"
+											},
+											"path": "testo2"
+										},
+										"enableLogging": true,
+										"storeSettings": {
+											"type": "AzureBlobStorageReadSettings",
+											"recursive": true
+										}
+									}
 								}
 							]
 						}
@@ -1252,6 +1296,7 @@
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_Zip')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_CsvSink')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_CsvSource')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_TempTable')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
@@ -1355,7 +1400,7 @@
 								"partitionOption": "None"
 							},
 							"dataset": {
-								"referenceName": "DA_SQL_Generic",
+								"referenceName": "DS_SQL_Generic",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -1480,7 +1525,7 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/Load O2 Files To Stage_V5')]",
-				"[concat(variables('factoryId'), '/datasets/DA_SQL_Generic')]",
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_Generic')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
 			]
 		},
@@ -2011,7 +2056,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DA_SQL_Generic')]",
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_Generic')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
