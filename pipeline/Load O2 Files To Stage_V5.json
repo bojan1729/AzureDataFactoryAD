@@ -1021,7 +1021,7 @@
 										"referenceName": "LN_BLOB_addufrain1",
 										"type": "LinkedServiceReference"
 									},
-									"path": "testo2"
+									"path": "testo2/logging"
 								},
 								"enableLogging": true,
 								"storeSettings": {
