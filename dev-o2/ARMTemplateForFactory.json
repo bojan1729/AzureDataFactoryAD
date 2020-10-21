@@ -471,8 +471,7 @@
 														}
 													},
 													"sink": {
-														"type": "AzureSqlSink",
-														"disableMetricsCollection": false
+														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
 													"translator": {
@@ -500,10 +499,7 @@
 													{
 														"referenceName": "DS_SQL_TempTable",
 														"type": "DatasetReference",
-														"parameters": {
-															"PDS_TableSchema": "@{item().SinkSchema}",
-															"PDS_TableName": "@{item().SinkTable}"
-														}
+														"parameters": {}
 													}
 												]
 											},
@@ -585,16 +581,7 @@
 													{
 														"referenceName": "DS_SQL_TempTable",
 														"type": "DatasetReference",
-														"parameters": {
-															"PDS_TableSchema": {
-																"value": "@{item().SinkSchema}",
-																"type": "Expression"
-															},
-															"PDS_TableName": {
-																"value": "@{item().SinkTable}",
-																"type": "Expression"
-															}
-														}
+														"parameters": {}
 													}
 												],
 												"outputs": [
@@ -3428,44 +3415,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_TempTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_TableSchema": {
-						"type": "string"
-					},
-					"PDS_TableName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev1"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().PDS_TableSchema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@concat('tmp_', dataset().PDS_TableName)",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -4130,6 +4079,30 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_TempTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "test",
+					"table": "table1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
 		}
 	]
 }
