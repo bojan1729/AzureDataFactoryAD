@@ -3146,7 +3146,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "Load O2 Files To Stage_V5",
+								"referenceName": "Load O2 Files To Stage_V6",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -3348,7 +3348,7 @@
 				"lastPublishTime": "2020-10-19T06:29:30Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Load O2 Files To Stage_V5')]"
+				"[concat(variables('factoryId'), '/pipelines/Load O2 Files To Stage_V6')]"
 			]
 		}
 	]
