@@ -949,7 +949,7 @@
 							},
 							"userProperties": [],
 							"typeProperties": {
-								"storedProcedureName": "[hubo2].[usp_HashKey]",
+								"storedProcedureName": "[staging].[usp_HashKey]",
 								"storedProcedureParameters": {
 									"FileType": {
 										"value": {
@@ -957,13 +957,6 @@
 											"type": "Expression"
 										},
 										"type": "Int32"
-									},
-									"PipelineRunID": {
-										"value": {
-											"value": "@pipeline().parameters.PPL_RunID",
-											"type": "Expression"
-										},
-										"type": "String"
 									},
 									"TableName": {
 										"value": {
