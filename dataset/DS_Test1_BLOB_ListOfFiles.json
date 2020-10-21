@@ -13,7 +13,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"fileName": "ListOfFiles_2020-10-07.json",
+				"fileName": "ListOfFiles_2020OCT.json",
 				"container": "test1"
 			}
 		}
