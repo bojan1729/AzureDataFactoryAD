@@ -1,0 +1,15 @@
+{
+	"name": "DS_SQL_TempTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_SQL_DevDatahub",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dev1"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
