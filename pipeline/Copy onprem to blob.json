@@ -1,5 +1,5 @@
 {
-	"name": "Copy oprem to blob",
+	"name": "Copy onprem to blob",
 	"properties": {
 		"activities": [
 			{
