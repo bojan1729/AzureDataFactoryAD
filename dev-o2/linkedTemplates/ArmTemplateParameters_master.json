@@ -14,9 +14,6 @@
 		"LN_ONPREM_vmdevdb_password": {
 			"value": ""
 		},
-		"LN_REST_ListOfFiles_password": {
-			"value": ""
-		},
 		"LN_SQL_DevDatahub_connectionString": {
 			"value": ""
 		},
@@ -27,7 +24,7 @@
 			"value": "AD\\Bojan.Ajlec"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_url": {
-			"value": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-07"
+			"value": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-20"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"value": "Dufrain"

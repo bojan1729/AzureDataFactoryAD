@@ -19,10 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LN_ONPREM_vmdevdb'"
 		},
-		"LN_REST_ListOfFiles_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
-		},
 		"LN_SQL_DevDatahub_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
@@ -37,7 +33,7 @@
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-07"
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-20"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
@@ -171,8 +167,12 @@
 					"authenticationType": "Basic",
 					"userName": "[parameters('LN_REST_ListOfFiles_properties_typeProperties_userName')]",
 					"password": {
-						"type": "SecureString",
-						"value": "[parameters('LN_REST_ListOfFiles_password')]"
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LN_KV_DufrainVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "O2-PI-UserPassword"
 					}
 				},
 				"connectVia": {
@@ -181,7 +181,8 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
 			]
 		},
 		{
@@ -542,7 +543,7 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "ListOfFiles_2020-10-07.json",
+						"fileName": "ListOfFiles_2020OCT.json",
 						"container": "test1"
 					}
 				},

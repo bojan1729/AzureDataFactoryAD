@@ -19,10 +19,6 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'password' of 'LN_ONPREM_vmdevdb'"
 		},
-		"LN_REST_ListOfFiles_password": {
-			"type": "secureString",
-			"metadata": "Secure string for 'password' of 'LN_REST_ListOfFiles'"
-		},
 		"LN_SQL_DevDatahub_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
@@ -37,7 +33,7 @@
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-07"
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-20"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
@@ -78,9 +74,6 @@
 					},
 					"LN_ONPREM_vmdevdb_password": {
 						"value": "[parameters('LN_ONPREM_vmdevdb_password')]"
-					},
-					"LN_REST_ListOfFiles_password": {
-						"value": "[parameters('LN_REST_ListOfFiles_password')]"
 					},
 					"LN_SQL_DevDatahub_connectionString": {
 						"value": "[parameters('LN_SQL_DevDatahub_connectionString')]"
