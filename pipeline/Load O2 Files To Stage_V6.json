@@ -437,7 +437,7 @@
 												},
 												"InsertRows": {
 													"value": {
-														"value": "@activity('Load Stage - Uncleaned').output.rowsCopied",
+														"value": "@activity('Load Stage - Cleaned').output.rowsCopied",
 														"type": "Expression"
 													},
 													"type": "Int32"
@@ -530,7 +530,7 @@
 												},
 												"ErrorMessage": {
 													"value": {
-														"value": "@{activity('Load Stage - Uncleaned').output.errors[0].Message}",
+														"value": "@{activity('Load Stage - Cleaned').output.errors[0].Message}",
 														"type": "Expression"
 													},
 													"type": "String"
@@ -572,7 +572,7 @@
 												},
 												"InsertRows": {
 													"value": {
-														"value": "@activity('Load Stage - Uncleaned').output.rowsCopied",
+														"value": "@activity('Load Stage - Cleaned').output.rowsCopied",
 														"type": "Expression"
 													},
 													"type": "Int32"
