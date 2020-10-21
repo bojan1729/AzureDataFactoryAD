@@ -1053,7 +1053,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[hubo2].[usp_CheckSeqNo]"
+					"storedProcedureName": "[staging].[usp_CheckSeqNo]"
 				},
 				"linkedServiceName": {
 					"referenceName": "LN_SQL_DevDatahub",
@@ -1080,7 +1080,7 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"storedProcedureName": "[hubo2].[usp_CheckSeqNo]"
+					"storedProcedureName": "[staging].[usp_CheckSeqNo]"
 				},
 				"linkedServiceName": {
 					"referenceName": "LN_SQL_DevDatahub",
