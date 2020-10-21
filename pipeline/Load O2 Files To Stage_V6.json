@@ -253,185 +253,11 @@
 								},
 								"ifFalseActivities": [
 									{
-										"name": "Load Temp",
-										"type": "Copy",
-										"dependsOn": [
-											{
-												"activity": "Truncate Tmp",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
-										"policy": {
-											"timeout": "7.00:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"source": {
-												"type": "DelimitedTextSource",
-												"storeSettings": {
-													"type": "AzureBlobStorageReadSettings",
-													"recursive": true
-												},
-												"formatSettings": {
-													"type": "DelimitedTextReadSettings"
-												}
-											},
-											"sink": {
-												"type": "AzureSqlSink",
-												"disableMetricsCollection": false
-											},
-											"enableStaging": false,
-											"translator": {
-												"type": "TabularTranslator",
-												"typeConversion": true,
-												"typeConversionSettings": {
-													"allowDataTruncation": true,
-													"treatBooleanAsNumber": false
-												}
-											}
-										},
-										"inputs": [
-											{
-												"referenceName": "DS_BLOB_CsvSource",
-												"type": "DatasetReference",
-												"parameters": {
-													"PDS_FileName": {
-														"value": "@{item().FileName}",
-														"type": "Expression"
-													}
-												}
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "DS_SQL_TempTable",
-												"type": "DatasetReference",
-												"parameters": {
-													"PDS_TableSchema": "@{item().SinkSchema}",
-													"PDS_TableName": "@{item().SinkTable}"
-												}
-											}
-										]
-									},
-									{
-										"name": "Truncate Tmp",
-										"type": "SqlServerStoredProcedure",
-										"dependsOn": [],
-										"policy": {
-											"timeout": "7.00:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"storedProcedureName": "[hubo2].[usp_TruncateTmp]",
-											"storedProcedureParameters": {
-												"TableName": {
-													"value": {
-														"value": "@{concat('tmp_', item().SinkTable)}",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"TableSchema": {
-													"value": {
-														"value": "@{item().SinkSchema}",
-														"type": "Expression"
-													},
-													"type": "String"
-												}
-											}
-										},
-										"linkedServiceName": {
-											"referenceName": "LN_SQL_DevDatahub",
-											"type": "LinkedServiceReference"
-										}
-									},
-									{
-										"name": "Load Stage - Cleaned",
-										"type": "Copy",
-										"dependsOn": [
-											{
-												"activity": "Whitespace Cleaning",
-												"dependencyConditions": [
-													"Succeeded"
-												]
-											}
-										],
-										"policy": {
-											"timeout": "7.00:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"source": {
-												"type": "AzureSqlSource",
-												"queryTimeout": "02:00:00",
-												"partitionOption": "None"
-											},
-											"sink": {
-												"type": "AzureSqlSink"
-											},
-											"enableStaging": false,
-											"translator": {
-												"type": "TabularTranslator",
-												"typeConversion": true,
-												"typeConversionSettings": {
-													"allowDataTruncation": true,
-													"treatBooleanAsNumber": false
-												}
-											}
-										},
-										"inputs": [
-											{
-												"referenceName": "DS_SQL_TempTable",
-												"type": "DatasetReference",
-												"parameters": {
-													"PDS_TableSchema": {
-														"value": "@{item().SinkSchema}",
-														"type": "Expression"
-													},
-													"PDS_TableName": {
-														"value": "@{item().SinkTable}",
-														"type": "Expression"
-													}
-												}
-											}
-										],
-										"outputs": [
-											{
-												"referenceName": "DS_SQL_StageTable",
-												"type": "DatasetReference",
-												"parameters": {
-													"PDS_TableSchema": {
-														"value": "@{item().SinkSchema}",
-														"type": "Expression"
-													},
-													"PDS_TableName": {
-														"value": "@{item().SinkTable}",
-														"type": "Expression"
-													}
-												}
-											}
-										]
-									},
-									{
 										"name": "Whitespace Cleaning",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [
 											{
-												"activity": "Load Temp",
+												"activity": "Load Stage - Cleaned",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -470,204 +296,16 @@
 										}
 									},
 									{
-										"name": "Insert File Log - Cleaned Succ",
-										"type": "SqlServerStoredProcedure",
+										"name": "Load Stage - Cleaned",
+										"type": "Copy",
 										"dependsOn": [
 											{
-												"activity": "Load Stage - Cleaned",
+												"activity": "Truncate Cleaned",
 												"dependencyConditions": [
 													"Succeeded"
 												]
 											}
 										],
-										"policy": {
-											"timeout": "7.00:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"storedProcedureName": "[hubo2].[usp_InsertFileLog]",
-											"storedProcedureParameters": {
-												"ComponentName": {
-													"value": {
-														"value": "@pipeline().Pipeline",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"ErrorMessage": {
-													"value": null,
-													"type": "String"
-												},
-												"FileName": {
-													"value": {
-														"value": "@{item().FileName}",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"FileRefID": {
-													"value": {
-														"value": "@{item().FileRefID}",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"FileSeqno": {
-													"value": {
-														"value": "@{item().FileSeqNo}",
-														"type": "Expression"
-													},
-													"type": "Int32"
-												},
-												"FileType": {
-													"value": {
-														"value": "@{item().FileType}",
-														"type": "Expression"
-													},
-													"type": "Int32"
-												},
-												"ImportDate": {
-													"value": {
-														"value": "@{item().ImportDate}",
-														"type": "Expression"
-													},
-													"type": "DateTime"
-												},
-												"InsertRows": {
-													"value": {
-														"value": "@activity('Load Stage - Cleaned').output.rowsCopied",
-														"type": "Expression"
-													},
-													"type": "Int32"
-												},
-												"InsertTime": {
-													"value": {
-														"value": "@utcnow()",
-														"type": "Expression"
-													},
-													"type": "DateTime"
-												},
-												"PipelineRunID": {
-													"value": {
-														"value": "@pipeline().parameters.PPL_RunID",
-														"type": "Expression"
-													},
-													"type": "String"
-												}
-											}
-										},
-										"linkedServiceName": {
-											"referenceName": "LN_SQL_DevDatahub",
-											"type": "LinkedServiceReference"
-										}
-									},
-									{
-										"name": "Insert File Log - Cleaned Fail",
-										"type": "SqlServerStoredProcedure",
-										"dependsOn": [
-											{
-												"activity": "Load Temp",
-												"dependencyConditions": [
-													"Failed"
-												]
-											}
-										],
-										"policy": {
-											"timeout": "7.00:00:00",
-											"retry": 0,
-											"retryIntervalInSeconds": 30,
-											"secureOutput": false,
-											"secureInput": false
-										},
-										"userProperties": [],
-										"typeProperties": {
-											"storedProcedureName": "[hubo2].[usp_InsertFileLog]",
-											"storedProcedureParameters": {
-												"ComponentName": {
-													"value": {
-														"value": "@pipeline().Pipeline",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"ErrorMessage": {
-													"value": {
-														"value": "@{activity('Load Temp').output.errors[0].Message}",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"FileName": {
-													"value": {
-														"value": "@{item().FileName}",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"FileRefID": {
-													"value": {
-														"value": "@{item().FileRefID}",
-														"type": "Expression"
-													},
-													"type": "String"
-												},
-												"FileSeqno": {
-													"value": {
-														"value": "@{item().FileSeqNo}",
-														"type": "Expression"
-													},
-													"type": "Int32"
-												},
-												"FileType": {
-													"value": {
-														"value": "@{item().FileType}",
-														"type": "Expression"
-													},
-													"type": "Int32"
-												},
-												"ImportDate": {
-													"value": {
-														"value": "@{item().ImportDate}",
-														"type": "Expression"
-													},
-													"type": "DateTime"
-												},
-												"InsertRows": {
-													"value": {
-														"value": "@activity('Load Temp').output.rowsCopied",
-														"type": "Expression"
-													},
-													"type": "Int32"
-												},
-												"InsertTime": {
-													"value": {
-														"value": "@utcnow()",
-														"type": "Expression"
-													},
-													"type": "DateTime"
-												},
-												"PipelineRunID": {
-													"value": {
-														"value": "@pipeline().parameters.PPL_RunID",
-														"type": "Expression"
-													},
-													"type": "String"
-												}
-											}
-										},
-										"linkedServiceName": {
-											"referenceName": "LN_SQL_DevDatahub",
-											"type": "LinkedServiceReference"
-										}
-									},
-									{
-										"name": "Load Stage - Uncleaned_copy1",
-										"type": "Copy",
-										"dependsOn": [],
 										"policy": {
 											"timeout": "7.00:00:00",
 											"retry": 0,
@@ -730,9 +368,16 @@
 										]
 									},
 									{
-										"name": "Insert File Log - Uncleaned Succ_copy1",
+										"name": "Insert File Log - Cleaned Succ",
 										"type": "SqlServerStoredProcedure",
-										"dependsOn": [],
+										"dependsOn": [
+											{
+												"activity": "Whitespace Cleaning",
+												"dependencyConditions": [
+													"Succeeded"
+												]
+											}
+										],
 										"policy": {
 											"timeout": "7.00:00:00",
 											"retry": 0,
@@ -819,7 +464,7 @@
 										}
 									},
 									{
-										"name": "Truncate Uncleaned_copy1",
+										"name": "Truncate Cleaned",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [],
 										"policy": {
@@ -855,9 +500,16 @@
 										}
 									},
 									{
-										"name": "Insert File Log - Uncleaned Fail_copy1",
+										"name": "Insert File Log - Cleaned Fail",
 										"type": "SqlServerStoredProcedure",
-										"dependsOn": [],
+										"dependsOn": [
+											{
+												"activity": "Load Stage - Cleaned",
+												"dependencyConditions": [
+													"Failed"
+												]
+											}
+										],
 										"policy": {
 											"timeout": "7.00:00:00",
 											"retry": 0,
