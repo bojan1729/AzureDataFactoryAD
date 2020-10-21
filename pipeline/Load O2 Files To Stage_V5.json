@@ -283,8 +283,7 @@
 												}
 											},
 											"sink": {
-												"type": "AzureSqlSink",
-												"disableMetricsCollection": false
+												"type": "AzureSqlSink"
 											},
 											"enableStaging": false,
 											"translator": {
@@ -311,11 +310,7 @@
 										"outputs": [
 											{
 												"referenceName": "DS_SQL_TempTable",
-												"type": "DatasetReference",
-												"parameters": {
-													"PDS_TableSchema": "@{item().SinkSchema}",
-													"PDS_TableName": "@{item().SinkTable}"
-												}
+												"type": "DatasetReference"
 											}
 										]
 									},
@@ -396,17 +391,7 @@
 										"inputs": [
 											{
 												"referenceName": "DS_SQL_TempTable",
-												"type": "DatasetReference",
-												"parameters": {
-													"PDS_TableSchema": {
-														"value": "@{item().SinkSchema}",
-														"type": "Expression"
-													},
-													"PDS_TableName": {
-														"value": "@{item().SinkTable}",
-														"type": "Expression"
-													}
-												}
+												"type": "DatasetReference"
 											}
 										],
 										"outputs": [
