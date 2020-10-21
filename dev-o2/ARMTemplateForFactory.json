@@ -2271,7 +2271,7 @@
 					}
 				],
 				"typeProperties": {
-					"schema": "hubo2",
+					"schema": "staging",
 					"table": "FileLoadDefinition"
 				}
 			},
