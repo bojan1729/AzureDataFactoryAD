@@ -27,7 +27,7 @@
 					},
 					"sink": {
 						"type": "AzureSqlSink",
-						"preCopyScript": "TRUNCATE TABLE [hubo2].[FileLoadDefinition]",
+						"preCopyScript": "TRUNCATE TABLE [staging].[FileLoadDefinition]",
 						"disableMetricsCollection": false
 					},
 					"enableStaging": false,
