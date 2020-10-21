@@ -446,7 +446,7 @@
 										},
 										"userProperties": [],
 										"typeProperties": {
-											"storedProcedureName": "[hubo2].[usp_CleanUp]",
+											"storedProcedureName": "[staging].[usp_CleanUp]",
 											"storedProcedureParameters": {
 												"ColumnArray": {
 													"value": {
@@ -457,7 +457,7 @@
 												},
 												"SourceTableName": {
 													"value": {
-														"value": "@{concat('tmp_', item().SinkTable)}",
+														"value": "@{concat('stg_', item().SinkTable)}",
 														"type": "Expression"
 													},
 													"type": "String"
