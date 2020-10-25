@@ -33,7 +33,7 @@
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-20"
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-19"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
@@ -497,6 +497,30 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_TempTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev1"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "test",
+					"table": "table1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -750,113 +774,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_ONPREM_vmdevdb",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "SubscriberCCBarID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Account",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CustomerName",
-						"type": "varchar"
-					},
-					{
-						"name": "Connections",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TopCode",
-						"type": "varchar"
-					},
-					{
-						"name": "TopLevel",
-						"type": "varchar"
-					},
-					{
-						"name": "AccountUnderTopCode",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CCProcedure",
-						"type": "varchar"
-					},
-					{
-						"name": "CCStage",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "EventDescription",
-						"type": "varchar"
-					},
-					{
-						"name": "RaisedDateTime",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "ActRep",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ActRepDesc",
-						"type": "varchar"
-					},
-					{
-						"name": "CustomerType",
-						"type": "varchar"
-					},
-					{
-						"name": "BalanceToRecover",
-						"type": "decimal",
-						"precision": 10,
-						"scale": 2
-					},
-					{
-						"name": "AddedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "RemovedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "PI",
-					"table": "SubscriberCCBar"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_ONPREM_vmdevdb')]"
 			]
 		}
 	]
