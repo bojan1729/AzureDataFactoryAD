@@ -2417,7 +2417,7 @@
 									}
 								},
 								{
-									"name": "Business Key",
+									"name": "NULLRow  RecordID RecordTime",
 									"type": "SqlServerStoredProcedure",
 									"dependsOn": [
 										{
@@ -2438,6 +2438,13 @@
 									"typeProperties": {
 										"storedProcedureName": "[[staging].[usp_HashKey]",
 										"storedProcedureParameters": {
+											"FileName": {
+												"value": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
 											"FileType": {
 												"value": {
 													"value": "@{item().FileType}",
@@ -2471,7 +2478,7 @@
 									"type": "Delete",
 									"dependsOn": [
 										{
-											"activity": "Business Key",
+											"activity": "NULLRow  RecordID RecordTime",
 											"dependencyConditions": [
 												"Succeeded"
 											]
