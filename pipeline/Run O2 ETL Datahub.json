@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "Load O2 Files To Stage_V6",
+						"referenceName": "Load O2 Files To Stage",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
