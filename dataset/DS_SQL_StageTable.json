@@ -14,7 +14,7 @@
 			}
 		},
 		"folder": {
-			"name": "Dev1"
+			"name": "Dev_picdr"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
