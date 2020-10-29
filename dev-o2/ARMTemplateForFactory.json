@@ -6304,7 +6304,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Load SubscriberBundle",
+						"name": "Load Datastore Test",
 						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
