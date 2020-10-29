@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Dev_picdr"
+			"name": "Dev_PICDR"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
