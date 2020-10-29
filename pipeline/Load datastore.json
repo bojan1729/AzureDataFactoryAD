@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[cdr].[usp_LoadCDR]",
+						"sqlReaderStoredProcedureName": "pin.usp_LoadDiaryEvent",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
