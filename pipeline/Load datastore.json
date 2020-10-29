@@ -25,7 +25,7 @@
 						"referenceName": "DS_SQL_Generic",
 						"type": "DatasetReference"
 					},
-					"firstRowOnly": false
+					"firstRowOnly": true
 				}
 			}
 		],
