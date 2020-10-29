@@ -1258,7 +1258,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"lastPublishTime": "2020-10-18T17:03:27Z"
@@ -2364,7 +2364,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"lastPublishTime": "2020-10-18T17:03:27Z"
@@ -3461,7 +3461,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"lastPublishTime": "2020-10-18T17:03:27Z"
@@ -4550,7 +4550,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"lastPublishTime": "2020-10-18T17:03:27Z"
@@ -4782,7 +4782,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"lastPublishTime": "2020-10-19T06:29:30Z"
@@ -5334,7 +5334,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -5374,7 +5374,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -5414,7 +5414,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"type": "Json",
@@ -5462,7 +5462,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"type": "DelimitedText",
@@ -5498,7 +5498,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -5553,7 +5553,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -5582,7 +5582,7 @@
 					}
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -5612,7 +5612,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_picdr"
+					"name": "Dev_PICDR"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
