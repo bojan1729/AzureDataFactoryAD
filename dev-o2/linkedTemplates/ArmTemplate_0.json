@@ -567,7 +567,6 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobStorageLocation",
-						"fileName": "ListOfFiles_2020OCT.json",
 						"container": "test1"
 					}
 				},
