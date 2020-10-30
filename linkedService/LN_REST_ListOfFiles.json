@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "RestService",
 		"typeProperties": {
-			"url": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-19",
+			"url": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-07",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Basic",
 			"userName": "Dufrain",
