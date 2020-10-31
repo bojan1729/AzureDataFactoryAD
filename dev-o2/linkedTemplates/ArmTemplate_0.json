@@ -33,7 +33,7 @@
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/list/2020-10-07"
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d"
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
