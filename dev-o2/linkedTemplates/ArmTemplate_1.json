@@ -13,6 +13,166 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_Generic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_PICDR_LoadDefinition')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FileRefID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ImportDate",
+						"type": "date"
+					},
+					{
+						"name": "FileType",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SinkSchema",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SinkTable",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FileSeqno",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "staging",
+					"table": "FileLoadDefinition"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_StageTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_TableSchema": {
+						"type": "string"
+					},
+					"PDS_TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().PDS_TableSchema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@concat('stg_', dataset().PDS_TableName)",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "test1"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ListOfFiles')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"container": "test1"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Unzip')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -204,6 +364,52 @@
 						"type": "String"
 					}
 				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ZipFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": "zzztest1",
+						"container": "test1"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_Test1_HTTP_ZipFile')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_HTTP_ZipFile",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation"
+					}
+				}
 			},
 			"dependsOn": []
 		},
@@ -471,172 +677,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_REST_PICDR_FileList')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_REST_PICDR_FileList",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"PLN_ImportDate": {
-							"value": "@dataset().PDS_ImportDate",
-							"type": "Expression"
-						}
-					}
-				},
-				"parameters": {
-					"PDS_ImportDate": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_FileList')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_FileList": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@concat(dataset().PDS_FileList, '.json')",
-							"type": "Expression"
-						},
-						"folderPath": "filelist",
-						"container": "picdr"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_PICDR_LoadDefinition')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "FileRefID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ImportDate",
-						"type": "date"
-					},
-					{
-						"name": "FileType",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SinkSchema",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SinkTable",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileSeqno",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "staging",
-					"table": "FileLoadDefinition"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_REST_PICDR_FileRef')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_REST_PICDR_FileRef",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"PLN_FileRef": {
-							"value": "@dataset().PDS_FileRef",
-							"type": "Expression"
-						}
-					}
-				},
-				"parameters": {
-					"PDS_FileRef": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_REST_Zip')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_REST_ListOfFiles",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Copy onprem to blob')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -703,7 +743,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]"
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Generic')]"
 			]
 		},
 		{
@@ -765,7 +806,71 @@
 				"lastPublishTime": "2020-10-09T17:19:14Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_REST_ListOfFiles')]"
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_REST_ListOfFiles')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_ListOfFiles')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Get Zip File From REST')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy data1",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "HttpReadSettings",
+									"requestMethod": "GET"
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_Test1_HTTP_ZipFile",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_Test1_BLOB_ZipFile",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_HTTP_ZipFile')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_ZipFile')]"
 			]
 		},
 		{
@@ -1853,7 +1958,9 @@
 				"annotations": [],
 				"lastPublishTime": "2020-10-18T17:03:27Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Load O2 Files To Stage_V6')]",
@@ -2940,7 +3047,9 @@
 				"annotations": [],
 				"lastPublishTime": "2020-10-18T17:03:27Z"
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
+			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Load datastore')]",
@@ -2981,509 +3090,8 @@
 				},
 				"annotations": []
 			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Unzip To Sql')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Unzip To SQL",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings"
-								}
-							},
-							"sink": {
-								"type": "AzureSqlSink"
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"mappings": [
-									{
-										"source": {
-											"name": "\"Group Code\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Group_Code",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Corporate Code\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Corporate_Code",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Account No\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Account_No",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Agreement No\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Agreement_No",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Subscription Number\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Subscription_Number",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Cost Centre\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Cost_Centre",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Network Serial Number\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Network_Serial_Number",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Tariff\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Tariff",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Call class\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Call_class",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Call class Description\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Call_class_Description",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Call Landing date\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Call_Landing_date",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Dialed Number\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Dialed_Number",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Call date\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Call_date",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Call time\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Call_time",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Bundled Call?\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Bundled_Call",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"SP Billed Call Price\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SP_Billed_Call_Price",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Service\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Service",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Pre-Bundle Actual Duration\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Pre_Bundle_Actual_Duration",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Pre-Bundled SP Value\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Pre_Bundled_SP_Value",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"SP Retail Call Price\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SP_Retail_Call_Price",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Discount Value\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Discount_Value",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"SCD Country of Call Origin\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SCD_Country_of_Call_Origin",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"SCD Call Direction\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SCD_Call_Direction",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"SCD Networks Call Indicator\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "SCD_Networks_Call_Indicator",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"GPRS Destination\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "GPRS_Destination",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"GPRS Product Code\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "GPRS_Product_Code",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Uplink Volume\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Uplink_Volume",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Downlink Volume\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Downlink_Volume",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									},
-									{
-										"source": {
-											"name": "\"Number of Contexts\"",
-											"type": "String",
-											"physicalType": "String"
-										},
-										"sink": {
-											"name": "Number_of_Contexts",
-											"type": "String",
-											"physicalType": "nvarchar"
-										}
-									}
-								],
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_Unzip",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_SQL_DevDatahub",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-10-09T17:19:14Z"
-			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Unzip')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_SQL_DevDatahub')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Zip To Unzip')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Zip To Unzip",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [
-							{
-								"name": "Source",
-								"value": "o2-test1//demo1.zip"
-							},
-							{
-								"name": "Destination",
-								"value": "o2-test1//demo1.csv"
-							}
-						],
-						"typeProperties": {
-							"source": {
-								"type": "DelimitedTextSource",
-								"storeSettings": {
-									"type": "AzureBlobStorageReadSettings",
-									"recursive": true
-								},
-								"formatSettings": {
-									"type": "DelimitedTextReadSettings",
-									"skipLineCount": "0",
-									"compressionProperties": {
-										"type": "ZipDeflateReadSettings",
-										"preserveZipFileNameAsFolder": false
-									}
-								}
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".txt"
-								}
-							},
-							"enableStaging": false,
-							"validateDataConsistency": false
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_Zip",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_Unzip",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-10-09T17:19:14Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Zip')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Unzip')]"
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_Generic')]"
 			]
 		},
 		{
@@ -4527,27 +4135,26 @@
 									"userProperties": [],
 									"typeProperties": {
 										"source": {
-											"type": "RestSource",
-											"httpRequestTimeout": "00:01:40",
-											"requestInterval": "00.00:00:00.010",
-											"requestMethod": "GET"
-										},
-										"sink": {
-											"type": "DelimitedTextSink",
+											"type": "BinarySource",
 											"storeSettings": {
-												"type": "AzureBlobStorageWriteSettings"
+												"type": "HttpReadSettings",
+												"requestMethod": "GET"
 											},
 											"formatSettings": {
-												"type": "DelimitedTextWriteSettings",
-												"quoteAllText": true,
-												"fileExtension": ".txt"
+												"type": "BinaryReadSettings"
+											}
+										},
+										"sink": {
+											"type": "BinarySink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
 											}
 										},
 										"enableStaging": false
 									},
 									"inputs": [
 										{
-											"referenceName": "DS_REST_PICDR_FileRef",
+											"referenceName": "DS_HTTP_PICDR_FileRef",
 											"type": "DatasetReference",
 											"parameters": {
 												"PDS_FileRef": {
@@ -4559,7 +4166,7 @@
 									],
 									"outputs": [
 										{
-											"referenceName": "DS_BLOB_Zip",
+											"referenceName": "DS_BLOB_PICDR_ZipSink",
 											"type": "DatasetReference",
 											"parameters": {
 												"PDS_FileName": {
@@ -4698,20 +4305,18 @@
 				"lastPublishTime": "2020-10-18T17:03:27Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_BLOB_PICDR_FileList')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_PICDR_LoadDefinition')]",
-				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileList')]",
-				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileRef')]"
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/zzz1')]",
+			"name": "[concat(parameters('factoryName'), '/Unzip To Sql')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Get File List",
+						"name": "Unzip To SQL",
 						"type": "Copy",
 						"dependsOn": [],
 						"policy": {
@@ -4724,107 +4329,17 @@
 						"userProperties": [],
 						"typeProperties": {
 							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET"
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_REST_PICDR_FileList",
-								"type": "DatasetReference",
-								"parameters": {
-									"PDS_ImportDate": {
-										"value": "@pipeline().parameters.PPL_ImportDate",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_BLOB_PICDR_FileList",
-								"type": "DatasetReference",
-								"parameters": {
-									"PDS_FileList": {
-										"value": "@pipeline().parameters.PPL_ImportDate",
-										"type": "Expression"
-									}
-								}
-							}
-						]
-					}
-				],
-				"parameters": {
-					"PPL_ImportDate": {
-						"type": "string"
-					},
-					"PPL_RunID": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-10-18T17:03:27Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileList')]",
-				"[concat(variables('factoryId'), '/datasets/DS_BLOB_PICDR_FileList')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/zzz2')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "File Load Definition",
-						"type": "Copy",
-						"dependsOn": [
-							{
-								"activity": "Get File List",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "JsonSource",
+								"type": "DelimitedTextSource",
 								"storeSettings": {
 									"type": "AzureBlobStorageReadSettings",
 									"recursive": true
 								},
 								"formatSettings": {
-									"type": "JsonReadSettings"
+									"type": "DelimitedTextReadSettings"
 								}
 							},
 							"sink": {
-								"type": "AzureSqlSink",
-								"preCopyScript": "TRUNCATE TABLE [staging].[FileLoadDefinition]",
-								"disableMetricsCollection": false
+								"type": "AzureSqlSink"
 							},
 							"enableStaging": false,
 							"translator": {
@@ -4832,189 +4347,385 @@
 								"mappings": [
 									{
 										"source": {
-											"path": "$['fileRefID']"
+											"name": "\"Group Code\"",
+											"type": "String",
+											"physicalType": "String"
 										},
 										"sink": {
-											"name": "FileRefID",
-											"type": "String"
+											"name": "Group_Code",
+											"type": "String",
+											"physicalType": "nvarchar"
 										}
 									},
 									{
 										"source": {
-											"path": "$['fileName']"
+											"name": "\"Corporate Code\"",
+											"type": "String",
+											"physicalType": "String"
 										},
 										"sink": {
-											"name": "FileName",
-											"type": "String"
+											"name": "Corporate_Code",
+											"type": "String",
+											"physicalType": "nvarchar"
 										}
 									},
 									{
 										"source": {
-											"path": "$['importDate']"
+											"name": "\"Account No\"",
+											"type": "String",
+											"physicalType": "String"
 										},
 										"sink": {
-											"name": "ImportDate",
-											"type": "DateTime"
+											"name": "Account_No",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Agreement No\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Agreement_No",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Subscription Number\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Subscription_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Cost Centre\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Cost_Centre",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Network Serial Number\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Network_Serial_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Tariff\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Tariff",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Call class\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Call_class",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Call class Description\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Call_class_Description",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Call Landing date\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Call_Landing_date",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Dialed Number\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Dialed_Number",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Call date\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Call_date",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Call time\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Call_time",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Bundled Call?\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Bundled_Call",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"SP Billed Call Price\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SP_Billed_Call_Price",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Service\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Service",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Pre-Bundle Actual Duration\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Pre_Bundle_Actual_Duration",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Pre-Bundled SP Value\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Pre_Bundled_SP_Value",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"SP Retail Call Price\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SP_Retail_Call_Price",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Discount Value\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Discount_Value",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"SCD Country of Call Origin\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SCD_Country_of_Call_Origin",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"SCD Call Direction\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SCD_Call_Direction",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"SCD Networks Call Indicator\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "SCD_Networks_Call_Indicator",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"GPRS Destination\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "GPRS_Destination",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"GPRS Product Code\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "GPRS_Product_Code",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Uplink Volume\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Uplink_Volume",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Downlink Volume\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Downlink_Volume",
+											"type": "String",
+											"physicalType": "nvarchar"
+										}
+									},
+									{
+										"source": {
+											"name": "\"Number of Contexts\"",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Number_of_Contexts",
+											"type": "String",
+											"physicalType": "nvarchar"
 										}
 									}
-								]
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
 							}
 						},
 						"inputs": [
 							{
-								"referenceName": "DS_BLOB_PICDR_FileList",
+								"referenceName": "DS_Test1_BLOB_Unzip",
 								"type": "DatasetReference",
-								"parameters": {
-									"PDS_FileList": {
-										"value": "@pipeline().parameters.PPL_ImportDate",
-										"type": "Expression"
-									}
-								}
+								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "DS_SQL_PICDR_LoadDefinition",
+								"referenceName": "DS_Test1_SQL_DevDatahub",
 								"type": "DatasetReference",
 								"parameters": {}
-							}
-						]
-					},
-					{
-						"name": "Derived Column",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "File Load Definition",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[staging].[usp_DerivedColumn]"
-						},
-						"linkedServiceName": {
-							"referenceName": "LN_SQL_DevDatahub",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Filter On New Files",
-						"type": "Lookup",
-						"dependsOn": [
-							{
-								"activity": "Derived Column",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileRefID NOT IN (SELECT FileRefID FROM [staging].[FileLog])",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "DS_SQL_PICDR_LoadDefinition",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": false
-						}
-					},
-					{
-						"name": "Get File List",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET"
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_REST_PICDR_FileList",
-								"type": "DatasetReference",
-								"parameters": {
-									"PDS_ImportDate": {
-										"value": "@pipeline().parameters.PPL_ImportDate",
-										"type": "Expression"
-									}
-								}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_BLOB_PICDR_FileList",
-								"type": "DatasetReference",
-								"parameters": {
-									"PDS_FileList": {
-										"value": "@pipeline().parameters.PPL_ImportDate",
-										"type": "Expression"
-									}
-								}
 							}
 						]
 					}
 				],
-				"parameters": {
-					"PPL_ImportDate": {
-						"type": "string"
-					},
-					"PPL_RunID": {
-						"type": "string"
-					}
-				},
 				"folder": {
-					"name": "Dev_PICDR"
+					"name": "Test1"
 				},
 				"annotations": [],
-				"lastPublishTime": "2020-10-18T17:03:27Z"
+				"lastPublishTime": "2020-10-09T17:19:14Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_BLOB_PICDR_FileList')]",
-				"[concat(variables('factoryId'), '/datasets/DS_SQL_PICDR_LoadDefinition')]",
-				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileList')]"
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Unzip')]",
+				"[concat(variables('factoryId'), '/datasets/DS_Test1_SQL_DevDatahub')]"
 			]
 		}
 	]

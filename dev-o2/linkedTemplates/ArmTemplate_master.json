@@ -23,6 +23,22 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_SQL_DevDatahub'"
 		},
+		"LN_HTTP_PICDR_FileRef_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/', linkedService().PLN_FileRef)}"
+		},
+		"LN_HTTP_PICDR_FileRef_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
+		},
+		"LN_HTTP_ZipFile_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d"
+		},
+		"LN_HTTP_ZipFile_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
+		},
 		"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://DufrainVault.vault.azure.net/"
@@ -44,14 +60,6 @@
 			"defaultValue": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/list/', linkedService().PLN_ImportDate)}"
 		},
 		"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "Dufrain"
-		},
-		"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/', linkedService().PLN_FileRef)}"
-		},
-		"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
 		},
@@ -97,6 +105,18 @@
 					"LN_KV_DufrainVault_properties_typeProperties_baseUrl": {
 						"value": "[parameters('LN_KV_DufrainVault_properties_typeProperties_baseUrl')]"
 					},
+					"LN_HTTP_PICDR_FileRef_properties_typeProperties_url": {
+						"value": "[parameters('LN_HTTP_PICDR_FileRef_properties_typeProperties_url')]"
+					},
+					"LN_HTTP_PICDR_FileRef_properties_typeProperties_userName": {
+						"value": "[parameters('LN_HTTP_PICDR_FileRef_properties_typeProperties_userName')]"
+					},
+					"LN_HTTP_ZipFile_properties_typeProperties_url": {
+						"value": "[parameters('LN_HTTP_ZipFile_properties_typeProperties_url')]"
+					},
+					"LN_HTTP_ZipFile_properties_typeProperties_userName": {
+						"value": "[parameters('LN_HTTP_ZipFile_properties_typeProperties_userName')]"
+					},
 					"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
 						"value": "[parameters('LN_ONPREM_vmdevdb_properties_typeProperties_userName')]"
 					},
@@ -111,12 +131,6 @@
 					},
 					"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
 						"value": "[parameters('LN_REST_PICDR_FileList_properties_typeProperties_userName')]"
-					},
-					"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
-						"value": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_url')]"
-					},
-					"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
-						"value": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_userName')]"
 					}
 				}
 			},

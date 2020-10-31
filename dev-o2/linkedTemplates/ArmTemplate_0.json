@@ -27,6 +27,22 @@
 			"type": "string",
 			"defaultValue": "https://DufrainVault.vault.azure.net/"
 		},
+		"LN_HTTP_PICDR_FileRef_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/', linkedService().PLN_FileRef)}"
+		},
+		"LN_HTTP_PICDR_FileRef_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
+		},
+		"LN_HTTP_ZipFile_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d"
+		},
+		"LN_HTTP_ZipFile_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
+		},
 		"LN_ONPREM_vmdevdb_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "AD\\Bojan.Ajlec"
@@ -44,14 +60,6 @@
 			"defaultValue": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/list/', linkedService().PLN_ImportDate)}"
 		},
 		"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
-			"type": "string",
-			"defaultValue": "Dufrain"
-		},
-		"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
-			"type": "string",
-			"defaultValue": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/', linkedService().PLN_FileRef)}"
-		},
-		"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
 		}
@@ -147,6 +155,73 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/LN_HTTP_PICDR_FileRef')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"PLN_FileRef": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('LN_HTTP_PICDR_FileRef_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('LN_HTTP_PICDR_FileRef_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LN_KV_DufrainVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "O2-PI-UserPassword"
+					}
+				},
+				"connectVia": {
+					"referenceName": "UKSouthRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_HTTP_ZipFile')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "HttpServer",
+				"typeProperties": {
+					"url": "[parameters('LN_HTTP_ZipFile_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('LN_HTTP_ZipFile_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LN_KV_DufrainVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "O2-PI-UserPassword"
+					}
+				},
+				"connectVia": {
+					"referenceName": "UKSouthRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/LN_ONPREM_vmdevdb')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -202,34 +277,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LN_SQL_DevDatahub')]",
-			"type": "Microsoft.DataFactory/factories/linkedServices",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"type": "AzureSqlDatabase",
-				"typeProperties": {
-					"connectionString": "[parameters('LN_SQL_DevDatahub_connectionString')]",
-					"password": {
-						"type": "AzureKeyVaultSecret",
-						"store": {
-							"referenceName": "LN_KV_DufrainVault",
-							"type": "LinkedServiceReference"
-						},
-						"secretName": "dev-db-password"
-					}
-				},
-				"connectVia": {
-					"referenceName": "UKSouthRuntime",
-					"type": "IntegrationRuntimeReference"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
-				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/LN_REST_PICDR_FileList')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -266,29 +313,21 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/LN_REST_PICDR_FileRef')]",
+			"name": "[concat(parameters('factoryName'), '/LN_SQL_DevDatahub')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
 			"properties": {
-				"parameters": {
-					"PLN_FileRef": {
-						"type": "string"
-					}
-				},
 				"annotations": [],
-				"type": "RestService",
+				"type": "AzureSqlDatabase",
 				"typeProperties": {
-					"url": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_url')]",
-					"enableServerCertificateValidation": true,
-					"authenticationType": "Basic",
-					"userName": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_userName')]",
+					"connectionString": "[parameters('LN_SQL_DevDatahub_connectionString')]",
 					"password": {
 						"type": "AzureKeyVaultSecret",
 						"store": {
 							"referenceName": "LN_KV_DufrainVault",
 							"type": "LinkedServiceReference"
 						},
-						"secretName": "O2-PI-UserPassword"
+						"secretName": "dev-db-password"
 					}
 				},
 				"connectVia": {
@@ -430,6 +469,77 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_FileList')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_FileList": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().PDS_FileList, '.json')",
+							"type": "Expression"
+						},
+						"folderPath": "filelist",
+						"container": "picdr"
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_ZipSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_FileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().PDS_FileName, '.ZIP')",
+							"type": "Expression"
+						},
+						"folderPath": "filezip",
+						"container": "picdr"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_BLOB_Zip')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -468,6 +578,73 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_HTTP_PICDR_FileRef')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_HTTP_PICDR_FileRef",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"PLN_FileRef": {
+							"value": "@dataset().PDS_FileRef",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"PDS_FileRef": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_HTTP_PICDR_FileRef')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_REST_PICDR_FileList')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_REST_PICDR_FileList",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"PLN_ImportDate": {
+							"value": "@dataset().PDS_ImportDate",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"PDS_ImportDate": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_REST_PICDR_FileList')]"
 			]
 		},
 		{
@@ -523,145 +700,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_Generic')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_StageTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_TableSchema": {
-						"type": "string"
-					},
-					"PDS_TableName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().PDS_TableSchema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@concat('stg_', dataset().PDS_TableName)",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_TempTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "test",
-					"table": "table1"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ListOfFiles')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "test1"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
 			]
 		}
 	]
