@@ -1,0 +1,25 @@
+{
+	"name": "LN_HTTP_ZipFile",
+	"properties": {
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Basic",
+			"userName": "Dufrain",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LN_KV_DufrainVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "O2-PI-UserPassword"
+			}
+		},
+		"connectVia": {
+			"referenceName": "UKSouthRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
