@@ -28,6 +28,12 @@
 		},
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"value": "Dufrain"
+		},
+		"LN_REST_PICDR_FileList_properties_typeProperties_url": {
+			"value": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/list/', linkedService().PLN_ImportDate)}"
+		},
+		"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
+			"value": "Dufrain"
 		}
 	}
 }

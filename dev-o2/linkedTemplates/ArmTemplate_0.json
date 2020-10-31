@@ -38,6 +38,14 @@
 		"LN_REST_ListOfFiles_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
+		},
+		"LN_REST_PICDR_FileList_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/list/', linkedService().PLN_ImportDate)}"
+		},
+		"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
 		}
 	},
 	"variables": {
@@ -201,6 +209,42 @@
 							"type": "LinkedServiceReference"
 						},
 						"secretName": "dev-db-password"
+					}
+				},
+				"connectVia": {
+					"referenceName": "UKSouthRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_REST_PICDR_FileList')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"PLN_ImportDate": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('LN_REST_PICDR_FileList_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('LN_REST_PICDR_FileList_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LN_KV_DufrainVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "O2-PI-UserPassword"
 					}
 				},
 				"connectVia": {
@@ -717,56 +761,6 @@
 					},
 					{
 						"name": "\"Number of Contexts\"",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Zip')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "D00533_263_Aerial_Subscribers_CC_Bar_Report_20201007130016.ZIP",
-						"folderPath": "20201007zip",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"compressionCodec": "ZipDeflate",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": [
-					{
-						"name": "ICAO",
-						"type": "String"
-					},
-					{
-						"name": "IATA",
-						"type": "String"
-					},
-					{
-						"name": "MAKER",
-						"type": "String"
-					},
-					{
-						"name": "DESCRIPTION",
 						"type": "String"
 					}
 				]
