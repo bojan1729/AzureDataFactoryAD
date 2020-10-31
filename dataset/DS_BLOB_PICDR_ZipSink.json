@@ -1,0 +1,21 @@
+{
+	"name": "DS_BLOB_PICDR_ZipSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_BLOB_addufrain1",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dev_PICDR"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"folderPath": "filezip",
+				"container": "picdr"
+			}
+		}
+	}
+}
