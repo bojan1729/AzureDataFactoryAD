@@ -73,10 +73,10 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_BLOB_FileList",
+						"referenceName": "DS_BLOB_PICDR_FileList",
 						"type": "DatasetReference",
 						"parameters": {
-							"PDS_FileName": {
+							"PDS_FileList": {
 								"value": "@pipeline().parameters.PPL_ImportDate",
 								"type": "Expression"
 							}
