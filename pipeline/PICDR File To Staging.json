@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get File List",
+				"name": "File Load Definition",
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
@@ -88,7 +88,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Get File List",
+						"activity": "File Load Definition",
 						"dependencyConditions": [
 							"Succeeded"
 						]
