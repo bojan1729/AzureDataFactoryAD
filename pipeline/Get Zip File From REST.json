@@ -1,5 +1,5 @@
 {
-	"name": "Get Zip File",
+	"name": "Get Zip File From REST",
 	"properties": {
 		"activities": [
 			{
