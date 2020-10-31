@@ -171,7 +171,14 @@
 						{
 							"name": "Zip to Csv",
 							"type": "Copy",
-							"dependsOn": [],
+							"dependsOn": [
+								{
+									"activity": "Get Zip File",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
 							"policy": {
 								"timeout": "7.00:00:00",
 								"retry": 0,
@@ -1013,6 +1020,63 @@
 									"recursive": true
 								}
 							}
+						},
+						{
+							"name": "Get Zip File",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "7.00:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "RestSource",
+									"httpRequestTimeout": "00:01:40",
+									"requestInterval": "00.00:00:00.010",
+									"requestMethod": "GET"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_REST_PICDR_FileRef",
+									"type": "DatasetReference",
+									"parameters": {
+										"PDS_FileRef": {
+											"value": "@{item().FileRefID}",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_BLOB_PICDR_Zip",
+									"type": "DatasetReference",
+									"parameters": {
+										"PDS_FileName": {
+											"value": "@{item().FileName}",
+											"type": "Expression"
+										}
+									}
+								}
+							]
 						}
 					]
 				}
