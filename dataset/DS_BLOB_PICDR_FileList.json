@@ -1,0 +1,28 @@
+{
+	"name": "DS_BLOB_PICDR_FileList",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_BLOB_addufrain1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"PDS_FileList": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat(dataset().PDS_FileList, '.json')",
+					"type": "Expression"
+				},
+				"folderPath": "filelist",
+				"container": "picdr"
+			}
+		},
+		"schema": {}
+	}
+}
