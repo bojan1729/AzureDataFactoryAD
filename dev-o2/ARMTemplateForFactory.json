@@ -3723,7 +3723,7 @@
 			"properties": {
 				"activities": [
 					{
-						"name": "Load O2 Files To Stage",
+						"name": "PICDR Load Datastore",
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
@@ -3736,7 +3736,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "Load O2 Files To Stage",
+								"referenceName": "PICDR Load Datastore",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -3825,7 +3825,7 @@
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "Load O2 Files To Stage",
+								"activity": "PICDR Load Datastore",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -3876,7 +3876,7 @@
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "Load O2 Files To Stage",
+								"activity": "PICDR Load Datastore",
 								"dependencyConditions": [
 									"Failed"
 								]
@@ -3938,7 +3938,7 @@
 				"lastPublishTime": "2020-10-19T06:29:30Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/Load O2 Files To Stage')]",
+				"[concat(variables('factoryId'), '/pipelines/PICDR Load Datastore')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_Generic')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
 			]
