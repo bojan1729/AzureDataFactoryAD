@@ -1035,27 +1035,26 @@
 							"userProperties": [],
 							"typeProperties": {
 								"source": {
-									"type": "RestSource",
-									"httpRequestTimeout": "00:01:40",
-									"requestInterval": "00.00:00:00.010",
-									"requestMethod": "GET"
-								},
-								"sink": {
-									"type": "DelimitedTextSink",
+									"type": "BinarySource",
 									"storeSettings": {
-										"type": "AzureBlobStorageWriteSettings"
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
 									},
 									"formatSettings": {
-										"type": "DelimitedTextWriteSettings",
-										"quoteAllText": true,
-										"fileExtension": ".txt"
+										"type": "BinaryReadSettings"
+									}
+								},
+								"sink": {
+									"type": "BinarySink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings"
 									}
 								},
 								"enableStaging": false
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_REST_PICDR_FileRef",
+									"referenceName": "DS_HTTP_PICDR_FileRef",
 									"type": "DatasetReference",
 									"parameters": {
 										"PDS_FileRef": {
@@ -1067,7 +1066,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "DS_BLOB_Zip",
+									"referenceName": "DS_BLOB_PICDR_ZipSink",
 									"type": "DatasetReference",
 									"parameters": {
 										"PDS_FileName": {
