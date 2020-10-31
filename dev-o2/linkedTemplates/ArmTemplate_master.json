@@ -49,7 +49,7 @@
 		},
 		"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
 			"type": "string",
-			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d"
+			"defaultValue": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/', linkedService().PLN_FileRef)}"
 		},
 		"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
 			"type": "string",
@@ -140,26 +140,6 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'dev-o2_ArmTemplate_0')]"
-			]
-		},
-		{
-			"name": "dev-o2_ArmTemplate_2",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2018-02-01",
-			"properties": {
-				"mode": "incremental",
-				"templateLink": {
-					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
-					"contentVersion": "1.0.0.0"
-				},
-				"parameters": {
-					"factoryName": {
-						"value": "[parameters('factoryName')]"
-					}
-				}
-			},
-			"dependsOn": [
-				"[resourceId('Microsoft.Resources/deployments', 'dev-o2_ArmTemplate_1')]"
 			]
 		}
 	]
