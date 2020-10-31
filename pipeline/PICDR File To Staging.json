@@ -1067,7 +1067,7 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "DS_BLOB_PICDR_Zip",
+									"referenceName": "DS_BLOB_Zip",
 									"type": "DatasetReference",
 									"parameters": {
 										"PDS_FileName": {
