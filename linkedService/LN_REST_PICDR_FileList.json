@@ -1,0 +1,30 @@
+{
+	"name": "LN_REST_PICDR_FileList",
+	"properties": {
+		"parameters": {
+			"PLN_ImportDate": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "@{concat('https://api.o2-cloudportal.co.uk/o2cdr/File/list/', linkedService().PLN_ImportDate)}",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Basic",
+			"userName": "Dufrain",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LN_KV_DufrainVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "O2-PI-UserPassword"
+			}
+		},
+		"connectVia": {
+			"referenceName": "UKSouthRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
