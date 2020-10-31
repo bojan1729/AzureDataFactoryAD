@@ -1264,14 +1264,7 @@
 												}
 											}
 										},
-										"logStorageSettings": {
-											"linkedServiceName": {
-												"referenceName": "LN_BLOB_addufrain1",
-												"type": "LinkedServiceReference"
-											},
-											"path": "testo2/logging"
-										},
-										"enableLogging": true,
+										"enableLogging": false,
 										"storeSettings": {
 											"type": "AzureBlobStorageReadSettings",
 											"recursive": true
@@ -2360,14 +2353,7 @@
 												}
 											}
 										},
-										"logStorageSettings": {
-											"linkedServiceName": {
-												"referenceName": "LN_BLOB_addufrain1",
-												"type": "LinkedServiceReference"
-											},
-											"path": "testo2/logging"
-										},
-										"enableLogging": true,
+										"enableLogging": false,
 										"storeSettings": {
 											"type": "AzureBlobStorageReadSettings",
 											"recursive": true

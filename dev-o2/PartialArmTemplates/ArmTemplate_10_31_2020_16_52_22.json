@@ -13,1019 +13,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_HTTP_PICDR_FileRef')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_HTTP_PICDR_FileRef",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"PLN_FileRef": {
-							"value": "@dataset().PDS_FileRef",
-							"type": "Expression"
-						}
-					}
-				},
-				"parameters": {
-					"PDS_FileRef": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_REST_PICDR_FileList')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_REST_PICDR_FileList",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"PLN_ImportDate": {
-							"value": "@dataset().PDS_ImportDate",
-							"type": "Expression"
-						}
-					}
-				},
-				"parameters": {
-					"PDS_ImportDate": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_FileLoadDefinition')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "FileRefID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ImportDate",
-						"type": "date"
-					},
-					{
-						"name": "FileType",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SinkSchema",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SinkTable",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileSeqno",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "staging",
-					"table": "FileLoadDefinition"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_Generic')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_PICDR_LoadDefinition')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "FileRefID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ImportDate",
-						"type": "date"
-					},
-					{
-						"name": "FileType",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SinkSchema",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SinkTable",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileSeqno",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "staging",
-					"table": "FileLoadDefinition"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_PICDR_StageTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_TableSchema": {
-						"type": "string"
-					},
-					"PDS_TableName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().PDS_TableSchema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@concat('stg_', dataset().PDS_TableName)",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_StageTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_TableSchema": {
-						"type": "string"
-					},
-					"PDS_TableName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().PDS_TableSchema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@concat('stg_', dataset().PDS_TableName)",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ListOfFiles')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "test1"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Unzip')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "demo2.csv",
-						"folderPath": "unzip",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": [
-					{
-						"name": "\"Group Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Corporate Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Account No\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Agreement No\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Subscription Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Cost Centre\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Network Serial Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Tariff\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call class\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call class Description\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call Landing date\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Dialed Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call date\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call time\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Bundled Call?\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SP Billed Call Price\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Service\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Pre-Bundle Actual Duration\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Pre-Bundled SP Value\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SP Retail Call Price\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Discount Value\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Country of Call Origin\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Call Direction\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Networks Call Indicator\"",
-						"type": "String"
-					},
-					{
-						"name": "\"GPRS Destination\"",
-						"type": "String"
-					},
-					{
-						"name": "\"GPRS Product Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Uplink Volume\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Downlink Volume\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Number of Contexts\"",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Zip')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "D00533_263_Aerial_Subscribers_CC_Bar_Report_20201007130016.ZIP",
-						"folderPath": "20201007zip",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"compressionCodec": "ZipDeflate",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": [
-					{
-						"name": "ICAO",
-						"type": "String"
-					},
-					{
-						"name": "IATA",
-						"type": "String"
-					},
-					{
-						"name": "MAKER",
-						"type": "String"
-					},
-					{
-						"name": "DESCRIPTION",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ZipFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "zzztest1",
-						"container": "test1"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_HTTP_ZipFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_HTTP_ZipFile",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_ONPREM_vmdevdb",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "SubscriberCCBarID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Account",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CustomerName",
-						"type": "varchar"
-					},
-					{
-						"name": "Connections",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TopCode",
-						"type": "varchar"
-					},
-					{
-						"name": "TopLevel",
-						"type": "varchar"
-					},
-					{
-						"name": "AccountUnderTopCode",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CCProcedure",
-						"type": "varchar"
-					},
-					{
-						"name": "CCStage",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "EventDescription",
-						"type": "varchar"
-					},
-					{
-						"name": "RaisedDateTime",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "ActRep",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ActRepDesc",
-						"type": "varchar"
-					},
-					{
-						"name": "CustomerType",
-						"type": "varchar"
-					},
-					{
-						"name": "BalanceToRecover",
-						"type": "decimal",
-						"precision": 10,
-						"scale": 2
-					},
-					{
-						"name": "AddedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "RemovedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "PI",
-					"table": "SubscriberCCBar"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_REST_ListOfFiles')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_REST_ListOfFiles",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_SQL_DevDatahub')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Group_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Corporate_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Account_No",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Agreement_No",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Subscription_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Cost_Centre",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Network_Serial_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Tariff",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_class",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_class_Description",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_Landing_date",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Dialed_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_date",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_time",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Bundled_Call",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SP_Billed_Call_Price",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Service",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Pre_Bundle_Actual_Duration",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Pre_Bundled_SP_Value",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SP_Retail_Call_Price",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Discount_Value",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Country_of_Call_Origin",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Call_Direction",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Networks_Call_Indicator",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GPRS_Destination",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GPRS_Product_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Uplink_Volume",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Downlink_Volume",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Number_of_Contexts",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "test",
-					"table": "Stage_CDR"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Copy onprem to blob')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Test1_ONPREM_Datastore_SubscriberCCBar",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_Generic",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Generic')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Get List Of Files REST API')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get List Of FIles",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET"
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Test1_REST_ListOfFiles",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_ListOfFiles",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-10-09T17:19:14Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_REST_ListOfFiles')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_ListOfFiles')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Get Zip File From REST')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "BinarySource",
-								"storeSettings": {
-									"type": "HttpReadSettings",
-									"requestMethod": "GET"
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							},
-							"sink": {
-								"type": "BinarySink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Test1_HTTP_ZipFile",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_ZipFile",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_HTTP_ZipFile')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_ZipFile')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Load O2 Files To Stage')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1108,8 +95,7 @@
 						"outputs": [
 							{
 								"referenceName": "DS_SQL_FileLoadDefinition",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -1168,8 +154,7 @@
 							},
 							"dataset": {
 								"referenceName": "DS_SQL_FileLoadDefinition",
-								"type": "DatasetReference",
-								"parameters": {}
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -2103,10 +1088,1085 @@
 				"annotations": [],
 				"lastPublishTime": "2020-10-18T17:03:27Z"
 			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_SQL_FileLoadDefinition')]",
-				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
-			]
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Load O2 Files To Stage_V6')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Get File List",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [staging].[FileLoadDefinition]",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['fileRefID']"
+										},
+										"sink": {
+											"name": "FileRefID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['fileName']"
+										},
+										"sink": {
+											"name": "FileName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['importDate']"
+										},
+										"sink": {
+											"name": "ImportDate",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_BLOB_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_FileName": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_SQL_FileLoadDefinition",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Derived Column",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Get File List",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[staging].[usp_DerivedColumn]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Filter On New Files",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Derived Column",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileRefID NOT IN (SELECT FileRefID FROM [staging].[FileLog])",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "DS_SQL_FileLoadDefinition",
+								"type": "DatasetReference"
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "File Iteration",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter On New Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter On New Files').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Zip to Csv",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "DelimitedTextSource",
+											"storeSettings": {
+												"type": "AzureBlobStorageReadSettings",
+												"recursive": true
+											},
+											"formatSettings": {
+												"type": "DelimitedTextReadSettings",
+												"compressionProperties": {
+													"type": "ZipDeflateReadSettings",
+													"preserveZipFileNameAsFolder": false
+												}
+											}
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false,
+										"translator": {
+											"type": "TabularTranslator",
+											"typeConversion": true,
+											"typeConversionSettings": {
+												"allowDataTruncation": true,
+												"treatBooleanAsNumber": false
+											}
+										}
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_BLOB_Zip",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileName": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_BLOB_CsvSink",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileName": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Clean NO - Clean YES",
+									"type": "IfCondition",
+									"dependsOn": [
+										{
+											"activity": "Zip to Csv",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"expression": {
+											"value": "@bool(equals(item().ColumnsToClean, ''))",
+											"type": "Expression"
+										},
+										"ifFalseActivities": [
+											{
+												"name": "Whitespace Cleaning",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "Load Stage - Cleaned",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[staging].[usp_CleanUp]",
+													"storedProcedureParameters": {
+														"ColumnArray": {
+															"value": {
+																"value": "@{item().ColumnsToClean}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"SourceTableName": {
+															"value": {
+																"value": "@{concat('stg_', item().SinkTable)}",
+																"type": "Expression"
+															},
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "LN_SQL_DevDatahub",
+													"type": "LinkedServiceReference"
+												}
+											},
+											{
+												"name": "Load Stage - Cleaned",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "Truncate Cleaned",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobStorageReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "AzureSqlSink"
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "DS_BLOB_CsvSource",
+														"type": "DatasetReference",
+														"parameters": {
+															"PDS_FileName": {
+																"value": "@{item().FileName}",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DS_SQL_StageTable",
+														"type": "DatasetReference",
+														"parameters": {
+															"PDS_TableSchema": {
+																"value": "@{item().SinkSchema}",
+																"type": "Expression"
+															},
+															"PDS_TableName": {
+																"value": "@{item().SinkTable}",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											},
+											{
+												"name": "Insert File Log - Cleaned Succ",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "Whitespace Cleaning",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[staging].[usp_InsertFileLog]",
+													"storedProcedureParameters": {
+														"ComponentName": {
+															"value": {
+																"value": "@pipeline().Pipeline",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"ErrorMessage": {
+															"value": null,
+															"type": "String"
+														},
+														"FileName": {
+															"value": {
+																"value": "@{item().FileName}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileRefID": {
+															"value": {
+																"value": "@{item().FileRefID}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileSeqno": {
+															"value": {
+																"value": "@{item().FileSeqNo}",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"FileType": {
+															"value": {
+																"value": "@{item().FileType}",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"ImportDate": {
+															"value": {
+																"value": "@{item().ImportDate}",
+																"type": "Expression"
+															},
+															"type": "DateTime"
+														},
+														"InsertRows": {
+															"value": {
+																"value": "@activity('Load Stage - Cleaned').output.rowsCopied",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"InsertTime": {
+															"value": {
+																"value": "@utcnow()",
+																"type": "Expression"
+															},
+															"type": "DateTime"
+														},
+														"PipelineRunID": {
+															"value": {
+																"value": "@pipeline().parameters.PPL_RunID",
+																"type": "Expression"
+															},
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "LN_SQL_DevDatahub",
+													"type": "LinkedServiceReference"
+												}
+											},
+											{
+												"name": "Truncate Cleaned",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[staging].[usp_Truncate]",
+													"storedProcedureParameters": {
+														"TableName": {
+															"value": {
+																"value": "@{concat('stg_', item().SinkTable)}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"TableSchema": {
+															"value": {
+																"value": "@{item().SinkSchema}",
+																"type": "Expression"
+															},
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "LN_SQL_DevDatahub",
+													"type": "LinkedServiceReference"
+												}
+											},
+											{
+												"name": "Insert File Log - Cleaned Fail",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "Load Stage - Cleaned",
+														"dependencyConditions": [
+															"Failed"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[staging].[usp_InsertFileLog]",
+													"storedProcedureParameters": {
+														"ComponentName": {
+															"value": {
+																"value": "@pipeline().Pipeline",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"ErrorMessage": {
+															"value": {
+																"value": "@{activity('Load Stage - Cleaned').output.errors[0].Message}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileName": {
+															"value": {
+																"value": "@{item().FileName}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileRefID": {
+															"value": {
+																"value": "@{item().FileRefID}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileSeqno": {
+															"value": {
+																"value": "@{item().FileSeqNo}",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"FileType": {
+															"value": {
+																"value": "@{item().FileType}",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"ImportDate": {
+															"value": {
+																"value": "@{item().ImportDate}",
+																"type": "Expression"
+															},
+															"type": "DateTime"
+														},
+														"InsertRows": {
+															"value": {
+																"value": "@activity('Load Stage - Cleaned').output.rowsCopied",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"InsertTime": {
+															"value": {
+																"value": "@utcnow()",
+																"type": "Expression"
+															},
+															"type": "DateTime"
+														},
+														"PipelineRunID": {
+															"value": {
+																"value": "@pipeline().parameters.PPL_RunID",
+																"type": "Expression"
+															},
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "LN_SQL_DevDatahub",
+													"type": "LinkedServiceReference"
+												}
+											}
+										],
+										"ifTrueActivities": [
+											{
+												"name": "Load Stage - Uncleaned",
+												"type": "Copy",
+												"dependsOn": [
+													{
+														"activity": "Truncate Uncleaned",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"source": {
+														"type": "DelimitedTextSource",
+														"storeSettings": {
+															"type": "AzureBlobStorageReadSettings",
+															"recursive": true
+														},
+														"formatSettings": {
+															"type": "DelimitedTextReadSettings"
+														}
+													},
+													"sink": {
+														"type": "AzureSqlSink"
+													},
+													"enableStaging": false,
+													"translator": {
+														"type": "TabularTranslator",
+														"typeConversion": true,
+														"typeConversionSettings": {
+															"allowDataTruncation": true,
+															"treatBooleanAsNumber": false
+														}
+													}
+												},
+												"inputs": [
+													{
+														"referenceName": "DS_BLOB_CsvSource",
+														"type": "DatasetReference",
+														"parameters": {
+															"PDS_FileName": {
+																"value": "@{item().FileName}",
+																"type": "Expression"
+															}
+														}
+													}
+												],
+												"outputs": [
+													{
+														"referenceName": "DS_SQL_StageTable",
+														"type": "DatasetReference",
+														"parameters": {
+															"PDS_TableSchema": {
+																"value": "@{item().SinkSchema}",
+																"type": "Expression"
+															},
+															"PDS_TableName": {
+																"value": "@{item().SinkTable}",
+																"type": "Expression"
+															}
+														}
+													}
+												]
+											},
+											{
+												"name": "Insert File Log - Uncleaned Succ",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "Load Stage - Uncleaned",
+														"dependencyConditions": [
+															"Succeeded"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[staging].[usp_InsertFileLog]",
+													"storedProcedureParameters": {
+														"ComponentName": {
+															"value": {
+																"value": "@pipeline().Pipeline",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"ErrorMessage": {
+															"value": null,
+															"type": "String"
+														},
+														"FileName": {
+															"value": {
+																"value": "@{item().FileName}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileRefID": {
+															"value": {
+																"value": "@{item().FileRefID}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileSeqno": {
+															"value": {
+																"value": "@{item().FileSeqNo}",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"FileType": {
+															"value": {
+																"value": "@{item().FileType}",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"ImportDate": {
+															"value": {
+																"value": "@{item().ImportDate}",
+																"type": "Expression"
+															},
+															"type": "DateTime"
+														},
+														"InsertRows": {
+															"value": {
+																"value": "@activity('Load Stage - Uncleaned').output.rowsCopied",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"InsertTime": {
+															"value": {
+																"value": "@utcnow()",
+																"type": "Expression"
+															},
+															"type": "DateTime"
+														},
+														"PipelineRunID": {
+															"value": {
+																"value": "@pipeline().parameters.PPL_RunID",
+																"type": "Expression"
+															},
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "LN_SQL_DevDatahub",
+													"type": "LinkedServiceReference"
+												}
+											},
+											{
+												"name": "Truncate Uncleaned",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[staging].[usp_Truncate]",
+													"storedProcedureParameters": {
+														"TableName": {
+															"value": {
+																"value": "@{concat('stg_', item().SinkTable)}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"TableSchema": {
+															"value": {
+																"value": "@{item().SinkSchema}",
+																"type": "Expression"
+															},
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "LN_SQL_DevDatahub",
+													"type": "LinkedServiceReference"
+												}
+											},
+											{
+												"name": "Insert File Log - Uncleaned Fail",
+												"type": "SqlServerStoredProcedure",
+												"dependsOn": [
+													{
+														"activity": "Load Stage - Uncleaned",
+														"dependencyConditions": [
+															"Failed"
+														]
+													}
+												],
+												"policy": {
+													"timeout": "7.00:00:00",
+													"retry": 0,
+													"retryIntervalInSeconds": 30,
+													"secureOutput": false,
+													"secureInput": false
+												},
+												"userProperties": [],
+												"typeProperties": {
+													"storedProcedureName": "[[staging].[usp_InsertFileLog]",
+													"storedProcedureParameters": {
+														"ComponentName": {
+															"value": {
+																"value": "@pipeline().Pipeline",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"ErrorMessage": {
+															"value": {
+																"value": "@{activity('Load Stage - Uncleaned').output.errors[0].Message}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileName": {
+															"value": {
+																"value": "@{item().FileName}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileRefID": {
+															"value": {
+																"value": "@{item().FileRefID}",
+																"type": "Expression"
+															},
+															"type": "String"
+														},
+														"FileSeqno": {
+															"value": {
+																"value": "@{item().FileSeqNo}",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"FileType": {
+															"value": {
+																"value": "@{item().FileType}",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"ImportDate": {
+															"value": {
+																"value": "@{item().ImportDate}",
+																"type": "Expression"
+															},
+															"type": "DateTime"
+														},
+														"InsertRows": {
+															"value": {
+																"value": "@activity('Load Stage - Uncleaned').output.rowsCopied",
+																"type": "Expression"
+															},
+															"type": "Int32"
+														},
+														"InsertTime": {
+															"value": {
+																"value": "@utcnow()",
+																"type": "Expression"
+															},
+															"type": "DateTime"
+														},
+														"PipelineRunID": {
+															"value": {
+																"value": "@pipeline().parameters.PPL_RunID",
+																"type": "Expression"
+															},
+															"type": "String"
+														}
+													}
+												},
+												"linkedServiceName": {
+													"referenceName": "LN_SQL_DevDatahub",
+													"type": "LinkedServiceReference"
+												}
+											}
+										]
+									}
+								},
+								{
+									"name": "NULLRow  RecordID RecordTime",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Clean NO - Clean YES",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[staging].[usp_HashKey]",
+										"storedProcedureParameters": {
+											"FileName": {
+												"value": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileType": {
+												"value": {
+													"value": "@{item().FileType}",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"TableName": {
+												"value": {
+													"value": "@{concat('stg_', item().SinkTable)}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"TableSchema": {
+												"value": {
+													"value": "@{item().SinkSchema}",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "LN_SQL_DevDatahub",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Delete CSV",
+									"type": "Delete",
+									"dependsOn": [
+										{
+											"activity": "NULLRow  RecordID RecordTime",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"dataset": {
+											"referenceName": "DS_BLOB_CsvSink",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileName": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												}
+											}
+										},
+										"enableLogging": false,
+										"storeSettings": {
+											"type": "AzureBlobStorageReadSettings",
+											"recursive": true
+										}
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Check Seq No - Branch Succ",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "File Iteration",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[staging].[usp_CheckSeqNo]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Check Seq No - Branch Fail",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "File Iteration",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[staging].[usp_CheckSeqNo]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"parameters": {
+					"PPL_ImportDate": {
+						"type": "string"
+					},
+					"PPL_RunID": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-18T17:03:27Z"
+			},
+			"dependsOn": []
 		}
 	]
 }
