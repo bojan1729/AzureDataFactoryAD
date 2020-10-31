@@ -998,7 +998,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"dataset": {
-									"referenceName": "DS_BLOB_CsvSink",
+									"referenceName": "DS_BLOB_PICDR_CsvSink",
 									"type": "DatasetReference",
 									"parameters": {
 										"PDS_FileName": {
@@ -1012,7 +1012,7 @@
 										"referenceName": "LN_BLOB_addufrain1",
 										"type": "LinkedServiceReference"
 									},
-									"path": "testo2/logging"
+									"path": "picdr/logging"
 								},
 								"enableLogging": true,
 								"storeSettings": {
