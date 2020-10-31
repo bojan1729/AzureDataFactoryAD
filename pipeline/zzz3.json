@@ -187,17 +187,6 @@
 									"requestInterval": "00.00:00:00.010",
 									"requestMethod": "GET"
 								},
-								"sink": {
-									"type": "DelimitedTextSink",
-									"storeSettings": {
-										"type": "AzureBlobStorageWriteSettings"
-									},
-									"formatSettings": {
-										"type": "DelimitedTextWriteSettings",
-										"quoteAllText": true,
-										"fileExtension": ".txt"
-									}
-								},
 								"enableStaging": false
 							},
 							"inputs": [
@@ -207,18 +196,6 @@
 									"parameters": {
 										"PDS_FileRef": {
 											"value": "@{item().FileRefID}",
-											"type": "Expression"
-										}
-									}
-								}
-							],
-							"outputs": [
-								{
-									"referenceName": "DS_BLOB_PICDR_Zip",
-									"type": "DatasetReference",
-									"parameters": {
-										"PDS_FileName": {
-											"value": "@{item().FileName}",
 											"type": "Expression"
 										}
 									}
