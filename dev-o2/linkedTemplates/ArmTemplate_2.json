@@ -1141,7 +1141,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PICDR File To Staging')]",
+			"name": "[concat(parameters('factoryName'), '/PICDR Load Datastore')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -2843,7 +2843,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Run O2 ETL Datahub')]",
+			"name": "[concat(parameters('factoryName'), '/PICDR Run')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3066,7 +3066,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PICDR Run')]",
+			"name": "[concat(parameters('factoryName'), '/Run O2 ETL Datahub')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
