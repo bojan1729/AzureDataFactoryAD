@@ -1,5 +1,5 @@
 {
-	"name": "PICDR File To Staging",
+	"name": "PICDR Load Datastore",
 	"properties": {
 		"activities": [
 			{
