@@ -1,0 +1,36 @@
+{
+	"name": "DS_BLOB_PICDR_CsvSource",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_BLOB_addufrain1",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"PDS_FileName": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Dev_PICDR"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat(dataset().PDS_FileName, '.CSV')",
+					"type": "Expression"
+				},
+				"folderPath": "filecsv",
+				"container": "picdr"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}
