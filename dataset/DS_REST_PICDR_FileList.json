@@ -1,0 +1,26 @@
+{
+	"name": "DS_REST_PICDR_FileList",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_REST_PICDR_FileList",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"PLN_ImportDate": {
+					"value": "@dataset().PDS_ImportDate",
+					"type": "Expression"
+				}
+			}
+		},
+		"parameters": {
+			"PDS_ImportDate": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Dev_PICDR"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
