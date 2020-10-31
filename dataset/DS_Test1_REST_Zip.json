@@ -1,0 +1,15 @@
+{
+	"name": "DS_Test1_REST_Zip",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_REST_ListOfFiles",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Test1"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"schema": []
+	}
+}
