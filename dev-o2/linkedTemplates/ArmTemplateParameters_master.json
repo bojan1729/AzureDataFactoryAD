@@ -35,6 +35,12 @@
 		"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
 			"value": "Dufrain"
 		},
+		"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
+			"value": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d"
+		},
+		"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
+			"value": "Dufrain"
+		},
 		"containerUri": {
 			"value": ""
 		},

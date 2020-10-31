@@ -46,6 +46,14 @@
 		"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
+		},
+		"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d"
+		},
+		"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
 		}
 	},
 	"variables": {
@@ -238,6 +246,42 @@
 					"enableServerCertificateValidation": true,
 					"authenticationType": "Basic",
 					"userName": "[parameters('LN_REST_PICDR_FileList_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LN_KV_DufrainVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "O2-PI-UserPassword"
+					}
+				},
+				"connectVia": {
+					"referenceName": "UKSouthRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_REST_PICDR_FileRef')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"PLN_FileRef": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_userName')]",
 					"password": {
 						"type": "AzureKeyVaultSecret",
 						"store": {
@@ -615,155 +659,6 @@
 					}
 				},
 				"schema": {}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Unzip')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "demo2.csv",
-						"folderPath": "unzip",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": [
-					{
-						"name": "\"Group Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Corporate Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Account No\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Agreement No\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Subscription Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Cost Centre\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Network Serial Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Tariff\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call class\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call class Description\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call Landing date\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Dialed Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call date\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call time\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Bundled Call?\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SP Billed Call Price\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Service\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Pre-Bundle Actual Duration\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Pre-Bundled SP Value\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SP Retail Call Price\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Discount Value\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Country of Call Origin\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Call Direction\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Networks Call Indicator\"",
-						"type": "String"
-					},
-					{
-						"name": "\"GPRS Destination\"",
-						"type": "String"
-					},
-					{
-						"name": "\"GPRS Product Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Uplink Volume\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Downlink Volume\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Number of Contexts\"",
-						"type": "String"
-					}
-				]
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"

@@ -47,6 +47,14 @@
 			"type": "string",
 			"defaultValue": "Dufrain"
 		},
+		"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d"
+		},
+		"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -103,6 +111,12 @@
 					},
 					"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
 						"value": "[parameters('LN_REST_PICDR_FileList_properties_typeProperties_userName')]"
+					},
+					"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
+						"value": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_url')]"
+					},
+					"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
+						"value": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_userName')]"
 					}
 				}
 			},
@@ -126,6 +140,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'dev-o2_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "dev-o2_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'dev-o2_ArmTemplate_1')]"
 			]
 		}
 	]

@@ -46,6 +46,14 @@
 		"LN_REST_PICDR_FileList_properties_typeProperties_userName": {
 			"type": "string",
 			"defaultValue": "Dufrain"
+		},
+		"LN_REST_PICDR_FileRef_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://api.o2-cloudportal.co.uk/o2cdr/File/JokWzDN4AFk---3d"
+		},
+		"LN_REST_PICDR_FileRef_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "Dufrain"
 		}
 	},
 	"variables": {
@@ -4328,7 +4336,14 @@
 								{
 									"name": "Zip to Csv",
 									"type": "Copy",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "Get Zip File",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "7.00:00:00",
 										"retry": 0,
@@ -5170,6 +5185,63 @@
 											"recursive": true
 										}
 									}
+								},
+								{
+									"name": "Get Zip File",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_REST_PICDR_FileRef",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileRef": {
+													"value": "@{item().FileRefID}",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_BLOB_PICDR_Zip",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileName": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												}
+											}
+										}
+									]
 								}
 							]
 						}
@@ -5305,6 +5377,8 @@
 				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileList')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_Zip')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_CsvSink')]",
+				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileRef')]",
+				"[concat(variables('factoryId'), '/datasets/DS_BLOB_PICDR_Zip')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_CsvSource')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
@@ -5781,6 +5855,453 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_REST_PICDR_FileRef')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"parameters": {
+					"PLN_FileRef": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Basic",
+					"userName": "[parameters('LN_REST_PICDR_FileRef_properties_typeProperties_userName')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LN_KV_DufrainVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "O2-PI-UserPassword"
+					}
+				},
+				"connectVia": {
+					"referenceName": "UKSouthRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_REST_PICDR_FileRef')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_REST_PICDR_FileRef",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"PLN_FileRef": {
+							"value": "@dataset().PDS_FileRef",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"PDS_FileRef": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_REST_PICDR_FileRef')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_Zip')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_FileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().PDS_FileName, '.ZIP')",
+							"type": "Expression"
+						},
+						"folderPath": "filezip",
+						"container": "picdr"
+					},
+					"columnDelimiter": ",",
+					"compressionCodec": "ZipDeflate",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": ""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/zzz3')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "File Load Definition",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get File List",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [staging].[FileLoadDefinition]",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['fileRefID']"
+										},
+										"sink": {
+											"name": "FileRefID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['fileName']"
+										},
+										"sink": {
+											"name": "FileName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['importDate']"
+										},
+										"sink": {
+											"name": "ImportDate",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_BLOB_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_FileList": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_SQL_PICDR_LoadDefinition",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Derived Column",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "File Load Definition",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[staging].[usp_DerivedColumn]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Filter On New Files",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Derived Column",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileRefID NOT IN (SELECT FileRefID FROM [staging].[FileLog])",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "DS_SQL_PICDR_LoadDefinition",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "File Iteration",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter On New Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter On New Files').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Get Zip File",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "RestSource",
+											"httpRequestTimeout": "00:01:40",
+											"requestInterval": "00.00:00:00.010",
+											"requestMethod": "GET"
+										},
+										"sink": {
+											"type": "DelimitedTextSink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											},
+											"formatSettings": {
+												"type": "DelimitedTextWriteSettings",
+												"quoteAllText": true,
+												"fileExtension": ".txt"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_REST_PICDR_FileRef",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileRef": {
+													"value": "@{item().FileRefID}",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_BLOB_PICDR_ZipSink",
+											"type": "DatasetReference",
+											"parameters": {}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Get File List",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_REST_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_ImportDate": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_BLOB_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_FileList": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"PPL_ImportDate": {
+						"type": "string"
+					},
+					"PPL_RunID": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-18T17:03:27Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_BLOB_PICDR_FileList')]",
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_PICDR_LoadDefinition')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]",
+				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileList')]",
+				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileRef')]",
+				"[concat(variables('factoryId'), '/datasets/DS_BLOB_PICDR_ZipSink')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_ZipSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "DelimitedText",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"folderPath": "filezip",
+						"container": "picdr"
+					},
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"quoteChar": "\""
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
 			]
 		}
 	]
