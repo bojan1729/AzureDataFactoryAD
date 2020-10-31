@@ -1349,7 +1349,6 @@
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_Zip')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_CsvSink')]",
-				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_CsvSource')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
 			]
@@ -2102,7 +2101,7 @@
 														},
 														"InsertRows": {
 															"value": {
-																"value": "@activity('Load Stage - Uncleaned').output.rowsCopied",
+																"value": "if(equals(@{item().FileType},7), @activity('Load Stage - Uncleaned').output.rowsCopied, @activity('Load Stage - Uncleaned').output.rowsCopied-1)",
 																"type": "Expression"
 															},
 															"type": "Int32"
@@ -2438,7 +2437,6 @@
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_Zip')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_CsvSink')]",
-				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]",
 				"[concat(variables('factoryId'), '/datasets/DS_BLOB_CsvSource')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
 			]
