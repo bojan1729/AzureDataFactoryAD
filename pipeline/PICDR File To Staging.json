@@ -671,7 +671,7 @@
 										],
 										"outputs": [
 											{
-												"referenceName": "DS_SQL_StageTable",
+												"referenceName": "DS_SQL_PICDR_StageTable",
 												"type": "DatasetReference",
 												"parameters": {
 													"PDS_TableSchema": {
