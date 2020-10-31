@@ -5,6 +5,11 @@
 			"referenceName": "LN_BLOB_addufrain1",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"PDS_FileName": {
+				"type": "string"
+			}
+		},
 		"folder": {
 			"name": "Dev_PICDR"
 		},
@@ -13,6 +18,10 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"fileName": {
+					"value": "@concat(dataset().PDS_FileName, '.ZIP')",
+					"type": "Expression"
+				},
 				"folderPath": "filezip",
 				"container": "picdr"
 			}
