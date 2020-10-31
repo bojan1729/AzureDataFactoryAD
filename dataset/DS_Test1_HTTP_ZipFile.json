@@ -1,0 +1,19 @@
+{
+	"name": "DS_Test1_HTTP_ZipFile",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_HTTP_ZipFile",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Test1"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation"
+			}
+		}
+	}
+}

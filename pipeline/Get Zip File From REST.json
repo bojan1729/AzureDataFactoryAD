@@ -16,33 +16,32 @@
 				"userProperties": [],
 				"typeProperties": {
 					"source": {
-						"type": "RestSource",
-						"httpRequestTimeout": "00:01:40",
-						"requestInterval": "00.00:00:00.010",
-						"requestMethod": "GET"
-					},
-					"sink": {
-						"type": "DelimitedTextSink",
+						"type": "BinarySource",
 						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings"
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
 						},
 						"formatSettings": {
-							"type": "DelimitedTextWriteSettings",
-							"quoteAllText": true,
-							"fileExtension": ".zip"
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
 						}
 					},
 					"enableStaging": false
 				},
 				"inputs": [
 					{
-						"referenceName": "DS_Test1_REST_Zip",
+						"referenceName": "DS_Test1_HTTP_ZipFile",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DS_Test1_BLOB_Generic",
+						"referenceName": "DS_Test1_BLOB_ZipFile",
 						"type": "DatasetReference"
 					}
 				]
