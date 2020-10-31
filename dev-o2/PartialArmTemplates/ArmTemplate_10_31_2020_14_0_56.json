@@ -13,1028 +13,22 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/DS_HTTP_PICDR_FileRef')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_HTTP_PICDR_FileRef",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"PLN_FileRef": {
-							"value": "@dataset().PDS_FileRef",
-							"type": "Expression"
-						}
-					}
-				},
-				"parameters": {
-					"PDS_FileRef": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_REST_PICDR_FileList')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_REST_PICDR_FileList",
-					"type": "LinkedServiceReference",
-					"parameters": {
-						"PLN_ImportDate": {
-							"value": "@dataset().PDS_ImportDate",
-							"type": "Expression"
-						}
-					}
-				},
-				"parameters": {
-					"PDS_ImportDate": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_FileLoadDefinition')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "FileRefID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ImportDate",
-						"type": "date"
-					},
-					{
-						"name": "FileType",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SinkSchema",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SinkTable",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileSeqno",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "staging",
-					"table": "FileLoadDefinition"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_Generic')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_PICDR_LoadDefinition')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "FileRefID",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ImportDate",
-						"type": "date"
-					},
-					{
-						"name": "FileType",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "SinkSchema",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SinkTable",
-						"type": "nvarchar"
-					},
-					{
-						"name": "FileSeqno",
-						"type": "int",
-						"precision": 10
-					}
-				],
-				"typeProperties": {
-					"schema": "staging",
-					"table": "FileLoadDefinition"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_StageTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_TableSchema": {
-						"type": "string"
-					},
-					"PDS_TableName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().PDS_TableSchema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@concat('stg_', dataset().PDS_TableName)",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Generic')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ListOfFiles')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "Json",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "test1"
-					}
-				},
-				"schema": {}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Unzip')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "demo2.csv",
-						"folderPath": "unzip",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": [
-					{
-						"name": "\"Group Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Corporate Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Account No\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Agreement No\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Subscription Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Cost Centre\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Network Serial Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Tariff\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call class\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call class Description\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call Landing date\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Dialed Number\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call date\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Call time\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Bundled Call?\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SP Billed Call Price\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Service\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Pre-Bundle Actual Duration\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Pre-Bundled SP Value\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SP Retail Call Price\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Discount Value\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Country of Call Origin\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Call Direction\"",
-						"type": "String"
-					},
-					{
-						"name": "\"SCD Networks Call Indicator\"",
-						"type": "String"
-					},
-					{
-						"name": "\"GPRS Destination\"",
-						"type": "String"
-					},
-					{
-						"name": "\"GPRS Product Code\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Uplink Volume\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Downlink Volume\"",
-						"type": "String"
-					},
-					{
-						"name": "\"Number of Contexts\"",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_Zip')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "D00533_263_Aerial_Subscribers_CC_Bar_Report_20201007130016.ZIP",
-						"folderPath": "20201007zip",
-						"container": "test1"
-					},
-					"columnDelimiter": ",",
-					"compressionCodec": "ZipDeflate",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": [
-					{
-						"name": "ICAO",
-						"type": "String"
-					},
-					{
-						"name": "IATA",
-						"type": "String"
-					},
-					{
-						"name": "MAKER",
-						"type": "String"
-					},
-					{
-						"name": "DESCRIPTION",
-						"type": "String"
-					}
-				]
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_BLOB_ZipFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": "zzztest1",
-						"container": "test1"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_HTTP_ZipFile')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_HTTP_ZipFile",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "Binary",
-				"typeProperties": {
-					"location": {
-						"type": "HttpServerLocation"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_ONPREM_vmdevdb",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "SqlServerTable",
-				"schema": [
-					{
-						"name": "SubscriberCCBarID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "Account",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CustomerName",
-						"type": "varchar"
-					},
-					{
-						"name": "Connections",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TopCode",
-						"type": "varchar"
-					},
-					{
-						"name": "TopLevel",
-						"type": "varchar"
-					},
-					{
-						"name": "AccountUnderTopCode",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "CCProcedure",
-						"type": "varchar"
-					},
-					{
-						"name": "CCStage",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "EventDescription",
-						"type": "varchar"
-					},
-					{
-						"name": "RaisedDateTime",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "ActRep",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ActRepDesc",
-						"type": "varchar"
-					},
-					{
-						"name": "CustomerType",
-						"type": "varchar"
-					},
-					{
-						"name": "BalanceToRecover",
-						"type": "decimal",
-						"precision": 10,
-						"scale": 2
-					},
-					{
-						"name": "AddedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					},
-					{
-						"name": "RemovedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "PI",
-					"table": "SubscriberCCBar"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_REST_ListOfFiles')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_REST_ListOfFiles",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "RestResource",
-				"typeProperties": {},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_Test1_SQL_DevDatahub')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "Group_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Corporate_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Account_No",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Agreement_No",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Subscription_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Cost_Centre",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Network_Serial_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Tariff",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_class",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_class_Description",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_Landing_date",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Dialed_Number",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_date",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Call_time",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Bundled_Call",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SP_Billed_Call_Price",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Service",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Pre_Bundle_Actual_Duration",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Pre_Bundled_SP_Value",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SP_Retail_Call_Price",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Discount_Value",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Country_of_Call_Origin",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Call_Direction",
-						"type": "nvarchar"
-					},
-					{
-						"name": "SCD_Networks_Call_Indicator",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GPRS_Destination",
-						"type": "nvarchar"
-					},
-					{
-						"name": "GPRS_Product_Code",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Uplink_Volume",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Downlink_Volume",
-						"type": "nvarchar"
-					},
-					{
-						"name": "Number_of_Contexts",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "test",
-					"table": "Stage_CDR"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_SQL_PICDR_StageTable')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_TableSchema": {
-						"type": "string"
-					},
-					"PDS_TableName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": {
-						"value": "@dataset().PDS_TableSchema",
-						"type": "Expression"
-					},
-					"table": {
-						"value": "@concat('stg_', dataset().PDS_TableName)",
-						"type": "Expression"
-					}
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Copy onprem to blob')]",
+			"name": "[concat(parameters('factoryName'), '/PICDR File To Staging')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "Copy data1",
+						"name": "File Load Definition",
 						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "SqlServerSource",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"sink": {
-								"type": "DelimitedTextSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "DelimitedTextWriteSettings",
-									"quoteAllText": true,
-									"fileExtension": ".csv"
-								}
-							},
-							"enableStaging": false,
-							"translator": {
-								"type": "TabularTranslator",
-								"typeConversion": true,
-								"typeConversionSettings": {
-									"allowDataTruncation": true,
-									"treatBooleanAsNumber": false
-								}
-							}
-						},
-						"inputs": [
+						"dependsOn": [
 							{
-								"referenceName": "DS_Test1_ONPREM_Datastore_SubscriberCCBar",
-								"type": "DatasetReference",
-								"parameters": {}
+								"activity": "Get File List",
+								"dependencyConditions": [
+									"Succeeded"
+								]
 							}
 						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_Generic",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_ONPREM_Datastore_SubscriberCCBar')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_Generic')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Get List Of Files REST API')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get List Of FIles",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "RestSource",
-								"httpRequestTimeout": "00:01:40",
-								"requestInterval": "00.00:00:00.010",
-								"requestMethod": "GET"
-							},
-							"sink": {
-								"type": "JsonSink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								},
-								"formatSettings": {
-									"type": "JsonWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Test1_REST_ListOfFiles",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_ListOfFiles",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": [],
-				"lastPublishTime": "2020-10-09T17:19:14Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_REST_ListOfFiles')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_ListOfFiles')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Get Zip File From REST')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Copy data1",
-						"type": "Copy",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "BinarySource",
-								"storeSettings": {
-									"type": "HttpReadSettings",
-									"requestMethod": "GET"
-								},
-								"formatSettings": {
-									"type": "BinaryReadSettings"
-								}
-							},
-							"sink": {
-								"type": "BinarySink",
-								"storeSettings": {
-									"type": "AzureBlobStorageWriteSettings"
-								}
-							},
-							"enableStaging": false
-						},
-						"inputs": [
-							{
-								"referenceName": "DS_Test1_HTTP_ZipFile",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						],
-						"outputs": [
-							{
-								"referenceName": "DS_Test1_BLOB_ZipFile",
-								"type": "DatasetReference",
-								"parameters": {}
-							}
-						]
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_HTTP_ZipFile')]",
-				"[concat(variables('factoryId'), '/datasets/DS_Test1_BLOB_ZipFile')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Load O2 Files To Stage')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Get File List",
-						"type": "Copy",
-						"dependsOn": [],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -1095,10 +89,10 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "DS_BLOB_FileList",
+								"referenceName": "DS_BLOB_PICDR_FileList",
 								"type": "DatasetReference",
 								"parameters": {
-									"PDS_FileName": {
+									"PDS_FileList": {
 										"value": "@pipeline().parameters.PPL_ImportDate",
 										"type": "Expression"
 									}
@@ -1107,9 +101,8 @@
 						],
 						"outputs": [
 							{
-								"referenceName": "DS_SQL_FileLoadDefinition",
-								"type": "DatasetReference",
-								"parameters": {}
+								"referenceName": "DS_SQL_PICDR_LoadDefinition",
+								"type": "DatasetReference"
 							}
 						]
 					},
@@ -1118,7 +111,7 @@
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "Get File List",
+								"activity": "File Load Definition",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -1167,9 +160,8 @@
 								"partitionOption": "None"
 							},
 							"dataset": {
-								"referenceName": "DS_SQL_FileLoadDefinition",
-								"type": "DatasetReference",
-								"parameters": {}
+								"referenceName": "DS_SQL_PICDR_LoadDefinition",
+								"type": "DatasetReference"
 							},
 							"firstRowOnly": false
 						}
@@ -1195,7 +187,14 @@
 								{
 									"name": "Zip to Csv",
 									"type": "Copy",
-									"dependsOn": [],
+									"dependsOn": [
+										{
+											"activity": "Get Zip File",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
 									"policy": {
 										"timeout": "7.00:00:00",
 										"retry": 0,
@@ -1242,7 +241,7 @@
 									},
 									"inputs": [
 										{
-											"referenceName": "DS_BLOB_Zip",
+											"referenceName": "DS_BLOB_PICDR_ZipSource",
 											"type": "DatasetReference",
 											"parameters": {
 												"PDS_FileName": {
@@ -1254,7 +253,7 @@
 									],
 									"outputs": [
 										{
-											"referenceName": "DS_BLOB_CsvSink",
+											"referenceName": "DS_BLOB_PICDR_CsvSink",
 											"type": "DatasetReference",
 											"parameters": {
 												"PDS_FileName": {
@@ -1371,7 +370,7 @@
 												},
 												"inputs": [
 													{
-														"referenceName": "DS_BLOB_CsvSource",
+														"referenceName": "DS_BLOB_PICDR_CsvSource",
 														"type": "DatasetReference",
 														"parameters": {
 															"PDS_FileName": {
@@ -1383,7 +382,7 @@
 												],
 												"outputs": [
 													{
-														"referenceName": "DS_SQL_StageTable",
+														"referenceName": "DS_SQL_PICDR_StageTable",
 														"type": "DatasetReference",
 														"parameters": {
 															"PDS_TableSchema": {
@@ -1676,7 +675,7 @@
 												},
 												"inputs": [
 													{
-														"referenceName": "DS_BLOB_CsvSource",
+														"referenceName": "DS_BLOB_PICDR_CsvSource",
 														"type": "DatasetReference",
 														"parameters": {
 															"PDS_FileName": {
@@ -1688,7 +687,7 @@
 												],
 												"outputs": [
 													{
-														"referenceName": "DS_SQL_StageTable",
+														"referenceName": "DS_SQL_PICDR_StageTable",
 														"type": "DatasetReference",
 														"parameters": {
 															"PDS_TableSchema": {
@@ -2015,7 +1014,7 @@
 									"userProperties": [],
 									"typeProperties": {
 										"dataset": {
-											"referenceName": "DS_BLOB_CsvSink",
+											"referenceName": "DS_BLOB_PICDR_CsvSink",
 											"type": "DatasetReference",
 											"parameters": {
 												"PDS_FileName": {
@@ -2029,7 +1028,7 @@
 												"referenceName": "LN_BLOB_addufrain1",
 												"type": "LinkedServiceReference"
 											},
-											"path": "testo2/logging"
+											"path": "picdr/logging"
 										},
 										"enableLogging": true,
 										"storeSettings": {
@@ -2037,6 +1036,62 @@
 											"recursive": true
 										}
 									}
+								},
+								{
+									"name": "Get Zip File",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "BinarySource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "GET"
+											},
+											"formatSettings": {
+												"type": "BinaryReadSettings"
+											}
+										},
+										"sink": {
+											"type": "BinarySink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_HTTP_PICDR_FileRef",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileRef": {
+													"value": "@{item().FileRefID}",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_BLOB_PICDR_ZipSink",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileName": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												}
+											}
+										}
+									]
 								}
 							]
 						}
@@ -2094,6 +1149,61 @@
 							"referenceName": "LN_SQL_DevDatahub",
 							"type": "LinkedServiceReference"
 						}
+					},
+					{
+						"name": "Get File List",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_REST_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_ImportDate": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_BLOB_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_FileList": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						]
 					}
 				],
 				"parameters": {
@@ -2111,9 +1221,44 @@
 				"lastPublishTime": "2020-10-18T17:03:27Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_SQL_FileLoadDefinition')]",
-				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_PICDR_StageTable')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_PICDR_StageTable')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_TableSchema": {
+						"type": "string"
+					},
+					"PDS_TableName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": {
+						"value": "@dataset().PDS_TableSchema",
+						"type": "Expression"
+					},
+					"table": {
+						"value": "@concat('stg_', dataset().PDS_TableName)",
+						"type": "Expression"
+					}
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }
