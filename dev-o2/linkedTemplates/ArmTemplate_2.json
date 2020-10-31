@@ -2898,7 +2898,7 @@
 									"ComponentName": {
 										"type": "String",
 										"value": {
-											"value": "Load O2 Files To Stage",
+											"value": "PICDR Load Datastore",
 											"type": "Expression"
 										}
 									},
