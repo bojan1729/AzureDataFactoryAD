@@ -13,6 +13,122 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/DS_HTTP_PICDR_FileRef')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_HTTP_PICDR_FileRef",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"PLN_FileRef": {
+							"value": "@dataset().PDS_FileRef",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"PDS_FileRef": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_REST_PICDR_FileList')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_REST_PICDR_FileList",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"PLN_ImportDate": {
+							"value": "@dataset().PDS_ImportDate",
+							"type": "Expression"
+						}
+					}
+				},
+				"parameters": {
+					"PDS_ImportDate": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {},
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_SQL_FileLoadDefinition')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "FileRefID",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FileName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ImportDate",
+						"type": "date"
+					},
+					{
+						"name": "FileType",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "SinkSchema",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SinkTable",
+						"type": "nvarchar"
+					},
+					{
+						"name": "FileSeqno",
+						"type": "int",
+						"precision": 10
+					}
+				],
+				"typeProperties": {
+					"schema": "staging",
+					"table": "FileLoadDefinition"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DS_SQL_Generic')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -673,83 +789,6 @@
 					"schema": "test",
 					"table": "Stage_CDR"
 				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_ZipSource')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_FileName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@concat(dataset().PDS_FileName, '.ZIP')",
-							"type": "Expression"
-						},
-						"folderPath": "filezip",
-						"container": "picdr"
-					},
-					"columnDelimiter": ",",
-					"compressionCodec": "ZipDeflate",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": []
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_CsvSink')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_FileName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@concat(dataset().PDS_FileName, '.CSV')",
-							"type": "Expression"
-						},
-						"folderPath": "filecsv",
-						"container": "picdr"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": []
 			},
 			"dependsOn": []
 		},
@@ -2036,6 +2075,7 @@
 				"lastPublishTime": "2020-10-18T17:03:27Z"
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_FileLoadDefinition')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
 			]
 		},
@@ -3125,50 +3165,8 @@
 				"lastPublishTime": "2020-10-18T17:03:27Z"
 			},
 			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_FileLoadDefinition')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_StageTable')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Load datastore')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Load Datastore Test",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderStoredProcedureName": "pin.usp_LoadSubscriberCCBar",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "DS_SQL_Generic",
-								"type": "DatasetReference",
-								"parameters": {}
-							},
-							"firstRowOnly": true
-						}
-					}
-				],
-				"folder": {
-					"name": "Test1"
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DS_SQL_Generic')]"
 			]
 		}
 	]
