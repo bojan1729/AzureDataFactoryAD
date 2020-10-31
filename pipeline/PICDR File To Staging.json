@@ -659,7 +659,7 @@
 										},
 										"inputs": [
 											{
-												"referenceName": "DS_BLOB_CsvSource",
+												"referenceName": "DS_BLOB_PICDR_CsvSource",
 												"type": "DatasetReference",
 												"parameters": {
 													"PDS_FileName": {
