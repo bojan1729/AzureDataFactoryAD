@@ -1143,7 +1143,7 @@
 									},
 									"InsertRows": {
 										"value": {
-											"value": "@activity('Load Stage - Uncleaned').output.rowsCopied",
+											"value": "@activity('Get Zip File').output.rowsCopied",
 											"type": "Expression"
 										},
 										"type": "Int32"
