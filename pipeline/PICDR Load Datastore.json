@@ -1182,6 +1182,10 @@
 							],
 							"userProperties": [],
 							"typeProperties": {
+								"on": {
+									"value": "@{item().FileType}",
+									"type": "Expression"
+								},
 								"cases": [
 									{
 										"value": "1",
