@@ -1590,7 +1590,7 @@
 														},
 														"InsertRows": {
 															"value": {
-																"value": "@activity('Load Stage - Cleaned').output.rowsCopied",
+																"value": "@if(equals(item().FileType,7), activity('Load Stage - Cleaned').output.rowsCopied, sub(activity('Load Stage - Cleaned').output.rowsCopied, 1))",
 																"type": "Expression"
 															},
 															"type": "Int32"
@@ -1895,7 +1895,7 @@
 														},
 														"InsertRows": {
 															"value": {
-																"value": "@activity('Load Stage - Uncleaned').output.rowsCopied",
+																"value": "@if(equals(item().FileType,7), activity('Load Stage - Uncleaned').output.rowsCopied, sub(activity('Load Stage - Uncleaned').output.rowsCopied, 1))",
 																"type": "Expression"
 															},
 															"type": "Int32"
@@ -2208,6 +2208,105 @@
 											}
 										}
 									]
+								},
+								{
+									"name": "Insert File Log - Get Zip Fail",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Get Zip File",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[staging].[usp_InsertFileLog]",
+										"storedProcedureParameters": {
+											"ComponentName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ErrorMessage": {
+												"value": {
+													"value": "@{activity('Get Zip File').output.errors[0].Message}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileRefID": {
+												"value": {
+													"value": "@{item().FileRefID}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileSeqno": {
+												"value": {
+													"value": "@{item().FileSeqNo}",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"FileType": {
+												"value": {
+													"value": "@{item().FileType}",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"ImportDate": {
+												"value": {
+													"value": "@{item().ImportDate}",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"InsertRows": {
+												"value": {
+													"value": "@activity('Get Zip File').output.rowsCopied",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"InsertTime": {
+												"value": {
+													"value": "@utcnow()",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"PipelineRunID": {
+												"value": {
+													"value": "@pipeline().parameters.PPL_RunID",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "LN_SQL_DevDatahub",
+										"type": "LinkedServiceReference"
+									}
 								}
 							]
 						}
