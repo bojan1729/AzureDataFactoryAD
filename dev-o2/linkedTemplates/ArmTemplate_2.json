@@ -2307,6 +2307,270 @@
 										"referenceName": "LN_SQL_DevDatahub",
 										"type": "LinkedServiceReference"
 									}
+								},
+								{
+									"name": "Load Datastore",
+									"type": "Switch",
+									"dependsOn": [
+										{
+											"activity": "Delete CSV",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"userProperties": [],
+									"typeProperties": {
+										"on": {
+											"value": "@{item().FileType}",
+											"type": "Expression"
+										},
+										"cases": [
+											{
+												"value": "1",
+												"activities": [
+													{
+														"name": "Load - SubscriberService",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderStoredProcedureName": "[[pin].[usp_LoadSubscriberService]",
+																"queryTimeout": "02:00:00",
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "DS_SQL_Generic",
+																"type": "DatasetReference",
+																"parameters": {}
+															}
+														}
+													}
+												]
+											},
+											{
+												"value": "2",
+												"activities": [
+													{
+														"name": "Load - SubscriberBundle",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderStoredProcedureName": "[[pin].[usp_LoadSubscriberBundle]",
+																"queryTimeout": "02:00:00",
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "DS_SQL_Generic",
+																"type": "DatasetReference",
+																"parameters": {}
+															}
+														}
+													}
+												]
+											},
+											{
+												"value": "3",
+												"activities": [
+													{
+														"name": "Load - SubscriptionDataAccount",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderStoredProcedureName": "[[pin].[usp_LoadSubscriptionDataAccount]",
+																"queryTimeout": "02:00:00",
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "DS_SQL_Generic",
+																"type": "DatasetReference",
+																"parameters": {}
+															}
+														}
+													},
+													{
+														"name": "Load - SubscriptionDataConnection",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderStoredProcedureName": "[[pin].[usp_LoadSubscriptionDataConnection]",
+																"queryTimeout": "02:00:00",
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "DS_SQL_Generic",
+																"type": "DatasetReference",
+																"parameters": {}
+															}
+														}
+													}
+												]
+											},
+											{
+												"value": "4",
+												"activities": [
+													{
+														"name": "Load - DiaryEvent",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderStoredProcedureName": "[[pin].[usp_LoadDiaryEvent]",
+																"queryTimeout": "02:00:00",
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "DS_SQL_Generic",
+																"type": "DatasetReference",
+																"parameters": {}
+															}
+														}
+													}
+												]
+											},
+											{
+												"value": "5",
+												"activities": [
+													{
+														"name": "Load - SubscriberCCBar",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderStoredProcedureName": "[[pin].[usp_LoadSubscriberCCBar]",
+																"queryTimeout": "02:00:00",
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "DS_SQL_Generic",
+																"type": "DatasetReference",
+																"parameters": {}
+															}
+														}
+													}
+												]
+											},
+											{
+												"value": "6",
+												"activities": [
+													{
+														"name": "Load - SubscriberNonCCBar",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderStoredProcedureName": "[[pin].[usp_LoadSubscriberNonCCBar]",
+																"queryTimeout": "02:00:00",
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "DS_SQL_Generic",
+																"type": "DatasetReference",
+																"parameters": {}
+															}
+														}
+													}
+												]
+											},
+											{
+												"value": "7",
+												"activities": [
+													{
+														"name": "Load - CDR",
+														"type": "Lookup",
+														"dependsOn": [],
+														"policy": {
+															"timeout": "7.00:00:00",
+															"retry": 0,
+															"retryIntervalInSeconds": 30,
+															"secureOutput": false,
+															"secureInput": false
+														},
+														"userProperties": [],
+														"typeProperties": {
+															"source": {
+																"type": "AzureSqlSource",
+																"sqlReaderStoredProcedureName": "[[cdr].[usp_usp_LoadCDR]",
+																"queryTimeout": "02:00:00",
+																"partitionOption": "None"
+															},
+															"dataset": {
+																"referenceName": "DS_SQL_Generic",
+																"type": "DatasetReference",
+																"parameters": {}
+															}
+														}
+													}
+												]
+											}
+										]
+									}
 								}
 							]
 						}
