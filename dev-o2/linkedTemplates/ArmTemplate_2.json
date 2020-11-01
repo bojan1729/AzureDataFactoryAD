@@ -5444,6 +5444,506 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/Test File Existence')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "File Load Definition",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get File List",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [staging].[FileLoadDefinition]",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['fileRefID']"
+										},
+										"sink": {
+											"name": "FileRefID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['fileName']"
+										},
+										"sink": {
+											"name": "FileName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['importDate']"
+										},
+										"sink": {
+											"name": "ImportDate",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_BLOB_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_FileList": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_SQL_PICDR_LoadDefinition",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Derived Column",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "File Load Definition",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[staging].[usp_DerivedColumn]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Filter On New Files",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "Derived Column",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileRefID NOT IN (SELECT FileRefID FROM [staging].[FileLog])",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "DS_SQL_PICDR_LoadDefinition",
+								"type": "DatasetReference",
+								"parameters": {}
+							},
+							"firstRowOnly": false
+						}
+					},
+					{
+						"name": "File Iteration",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter On New Files",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter On New Files').output.value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Get Zip File",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"source": {
+											"type": "BinarySource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "GET"
+											},
+											"formatSettings": {
+												"type": "BinaryReadSettings"
+											}
+										},
+										"sink": {
+											"type": "BinarySink",
+											"storeSettings": {
+												"type": "AzureBlobStorageWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "DS_HTTP_PICDR_FileRef",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileRef": {
+													"value": "@{item().FileRefID}",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "DS_BLOB_PICDR_ZipSink",
+											"type": "DatasetReference",
+											"parameters": {
+												"PDS_FileName": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								},
+								{
+									"name": "Insert File Log - Get Zip Fail",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Get Zip File",
+											"dependencyConditions": [
+												"Failed"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[staging].[usp_InsertFileLog]",
+										"storedProcedureParameters": {
+											"ComponentName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ErrorMessage": {
+												"value": {
+													"value": "@{activity('Get Zip File').output.errors[0].Message}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileRefID": {
+												"value": {
+													"value": "@{item().FileRefID}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileSeqno": {
+												"value": {
+													"value": "@{item().FileSeqNo}",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"FileType": {
+												"value": {
+													"value": "@{item().FileType}",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"ImportDate": {
+												"value": {
+													"value": "@{item().ImportDate}",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"InsertRows": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"InsertTime": {
+												"value": {
+													"value": "@utcnow()",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"PipelineRunID": {
+												"value": {
+													"value": "@pipeline().parameters.PPL_RunID",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "LN_SQL_DevDatahub",
+										"type": "LinkedServiceReference"
+									}
+								},
+								{
+									"name": "Insert File Log - Get Zip Succ",
+									"type": "SqlServerStoredProcedure",
+									"dependsOn": [
+										{
+											"activity": "Get Zip File",
+											"dependencyConditions": [
+												"Succeeded"
+											]
+										}
+									],
+									"policy": {
+										"timeout": "7.00:00:00",
+										"retry": 0,
+										"retryIntervalInSeconds": 30,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"storedProcedureName": "[[staging].[usp_InsertFileLog]",
+										"storedProcedureParameters": {
+											"ComponentName": {
+												"value": {
+													"value": "@pipeline().Pipeline",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"ErrorMessage": {
+												"value": null,
+												"type": "String"
+											},
+											"FileName": {
+												"value": {
+													"value": "@{item().FileName}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileRefID": {
+												"value": {
+													"value": "@{item().FileRefID}",
+													"type": "Expression"
+												},
+												"type": "String"
+											},
+											"FileSeqno": {
+												"value": {
+													"value": "@{item().FileSeqNo}",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"FileType": {
+												"value": {
+													"value": "@{item().FileType}",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"ImportDate": {
+												"value": {
+													"value": "@{item().ImportDate}",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"InsertRows": {
+												"value": {
+													"value": "0",
+													"type": "Expression"
+												},
+												"type": "Int32"
+											},
+											"InsertTime": {
+												"value": {
+													"value": "@utcnow()",
+													"type": "Expression"
+												},
+												"type": "DateTime"
+											},
+											"PipelineRunID": {
+												"value": {
+													"value": "@pipeline().parameters.PPL_RunID",
+													"type": "Expression"
+												},
+												"type": "String"
+											}
+										}
+									},
+									"linkedServiceName": {
+										"referenceName": "LN_SQL_DevDatahub",
+										"type": "LinkedServiceReference"
+									}
+								}
+							]
+						}
+					},
+					{
+						"name": "Get File List",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_REST_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_ImportDate": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_BLOB_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_FileList": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"PPL_ImportDate": {
+						"type": "string"
+					},
+					"PPL_RunID": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-18T17:03:27Z"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/PICDR Main Run')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
