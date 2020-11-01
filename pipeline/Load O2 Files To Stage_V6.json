@@ -437,7 +437,7 @@
 												},
 												"InsertRows": {
 													"value": {
-														"value": "@activity('Load Stage - Cleaned').output.rowsCopied - 1\n",
+														"value": "@sub(activity('Load Stage - Cleaned').output.rowsCopied, 1)",
 														"type": "Expression"
 													},
 													"type": "Int32"
