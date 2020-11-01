@@ -3907,7 +3907,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Test File Existence')]",
+			"name": "[concat(parameters('factoryName'), '/Test ZIP Existence')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
