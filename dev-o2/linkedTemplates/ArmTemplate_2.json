@@ -2556,7 +2556,7 @@
 														"typeProperties": {
 															"source": {
 																"type": "AzureSqlSource",
-																"sqlReaderStoredProcedureName": "[[cdr].[usp_usp_LoadCDR]",
+																"sqlReaderStoredProcedureName": "[[cdr].[usp_LoadCDR]",
 																"queryTimeout": "02:00:00",
 																"partitionOption": "None"
 															},
