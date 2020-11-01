@@ -437,7 +437,7 @@
 												},
 												"InsertRows": {
 													"value": {
-														"value": "@sub(activity('Load Stage - Cleaned').output.rowsCopied, 1)",
+														"value": "@if(equals(item().FileType,7), activity('Load Stage - Cleaned').output.rowsCopied, sub(activity('Load Stage - Cleaned').output.rowsCopied, 1))",
 														"type": "Expression"
 													},
 													"type": "Int32"
