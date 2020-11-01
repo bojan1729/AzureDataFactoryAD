@@ -1075,7 +1075,7 @@
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Get Zip File",
+									"activity": "Delete CSV",
 									"dependencyConditions": [
 										"Failed"
 									]
