@@ -52,7 +52,7 @@
 					"storedProcedureParameters": {
 						"Actions": {
 							"value": {
-								"value": "activity('Lookup Proc').output.value.actions",
+								"value": "@{activity('Lookup Proc').output.firstRow.actions}",
 								"type": "Expression"
 							},
 							"type": "Int32"
@@ -66,14 +66,14 @@
 						},
 						"ErrorMessage": {
 							"value": {
-								"value": "{activity('Lookup Proc').output.value.ErrorMessage}",
+								"value": "@{activity('Lookup Proc').output.firstRow.ErrorMessage}",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"ErrorNumber": {
 							"value": {
-								"value": "{activity('Lookup Proc').output.value.ErrorNumber}",
+								"value": "@{activity('Lookup Proc').output.firstRow.ErrorNumber}",
 								"type": "Expression"
 							},
 							"type": "Int32"
@@ -84,7 +84,7 @@
 						},
 						"Inserts": {
 							"value": {
-								"value": "@activity('Lookup Proc').output.value.inserts",
+								"value": "@{activity('Lookup Proc').output.firstRow.inserts}",
 								"type": "Expression"
 							},
 							"type": "Int32"
@@ -106,7 +106,7 @@
 						},
 						"Updates": {
 							"value": {
-								"value": "@activity('Lookup Proc').output.value.updates",
+								"value": "@{activity('Lookup Proc').output.firstRow.updates}",
 								"type": "Expression"
 							},
 							"type": "Int32"
