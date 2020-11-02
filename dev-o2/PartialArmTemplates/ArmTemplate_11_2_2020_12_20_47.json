@@ -1,0 +1,232 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "dev-o2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/test_pipe')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy to staging table",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "WITH ContractEventLinks AS \n(\n\tSELECT \n\t\tContractID\n\t\t,EventTypeID\n\t\t,EventDateTime \n\tFROM [Evolution].[Crm].[ContractEventLink]  \n\tWHERE EventTypeID IN (3, 4)\n)\n,ContractCosts AS\n(\n\tSELECT\n\t\tContractProductID\n\t\t,CostTypeID\n\t\t,Amount\n\t\t,AffectsHardwareFund\n\tFROM [Evolution].[Crm].[ContractCost] \n\tWHERE RemovedDate IS NULL AND (CostTypeID IN (8, 2, 9, 34, 35, 36, 37, 38, 39) OR AffectsHardwareFund = 1)\n)\n,SBIDates AS\n(\n\tSELECT\n\t\tUSI\n\t\t,MPN\n\t\t,rp.AccountNumber\n\t\t,MAX(p.PeriodDate) SBIDate\n\tFROM [Evolution].[SBI].[Period] p \n\tINNER JOIN [Evolution].[SBI].[FileGroup] fg  ON p.PeriodID = fg.PeriodID\n\tINNER JOIN [Evolution].[SBI].[File] f  ON fg.FileGroupID = f.FileGroupID\n\tINNER JOIN [Evolution].[SBI].[Summary] s  ON s.FileID = f.FileID\n\tINNER JOIN [Evolution].[SBI].[RevsharePayment] rp  ON rp.SummaryID = s.SummaryID\n\tGROUP BY USI, MPN, rp.AccountNumber\n)\n,Tariffs AS\n(\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,pr.[Name] AS TariffName\n\t\t,gr.[Name] AS TariffGroup\n\t\t,dp.RevsharePct\n\t\t,dp.UpgradeTariff\n\t\t,ta.Legacy\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID AND gr.ProductTypeID = 1\n\tLEFT JOIN --get the most recent version of tariff(?)\n\t(\n\t\tSELECT\n\t\tTariffCode, PackageCode, Legacy, ROW_NUMBER() OVER (PARTITION BY TariffCode, PackageCode ORDER BY TariffID DESC) AS RowNum\n\t\tFROM Evolution.EService.Tariff \n\t\tWHERE [Version] = (SELECT TOP 1 [Version] FROM Evolution.EService.Tariff  WHERE [Version] IS NOT NULL ORDER BY 1 DESC)\n\t) ta ON ta.TariffCode = dp.TariffCode AND ta.PackageCode = dp.PackageCode AND ta.RowNum = 1\n\tWHERE cp.RemovedDate IS NULL\n), preAgg AS (\n\n\n\tSELECT  \n\t\tc.ContractID\n\t\t,c.CustomerID\n\t\t,try_cast(c.ContractNumber as BIGINT) [MPN]\n\t\t,c.SalesPersonEmployeeID\n\t\t,case when tt.ConnectionTypeID = 8 then 1 else 0 end as VoiceTarrif\n\t\t,cd.DateSold\n\t\t,cd.DateCompleted\n\t\t,g.Name [GradeStatus]\n\t\t,e.EmployeeID\n\t\t,e.FirstName\n\t\t,e.LastName\n\t\t,d.Name deptName\n\t\t,cc.Amount Revshare\n\t\t,t.RevsharePCT\n\t\t,case when t.RevsharePCT = 56.00 then 1 else 0 end as isAdvanceable\n\t\t,t.TariffName\n\n\tFROM Evolution.[Crm].[Contract] c\n\tleft join [Datastore].[Store].[ContractDate] cd on cd.ContractID = c.ContractID\n\tleft join Evolution.[HR].[Employee] e on e.EmployeeID = c.SalesPersonEmployeeID\n\tleft join [Evolution].[HR].[EmployeeDepartmentLink] edl on edl.EmployeeID = e.EmployeeID\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tand edl.StartDate <= c.DateSold\n\t\t\t\t\t\t\t\t\t\t\t\t\t\t\tand (edl.EndDate is null or edl.EndDate > c.DateSold) --which department was the employee in at the point of sale\n\tleft join Evolution.hr.Department d on edl.DepartmentID = d.DepartmentID\n\tleft join Tariffs t on t.ContractID = c.ContractID\n\tleft join ContractCosts cc on cc.ContractProductID = t.ContractProductID\n\t\t\t\t\t\t\t\tand cc.CostTypeID = 9\n\tleft join [Evolution].[Crm].[TariffType] tt on tt.TariffTypeID = c.TariffTypeID\n\tleft join [Evolution].[Crm].[ProvisioningStatus] ps on ps.ProvisioningStatusID = c.ProvisioningStatusID\n\tleft JOIN [Evolution].[Crm].[Grade] g  ON g.GradeID = ps.GradeID\n\n\t--where c.DateSold BETWEEN '2020-09-01 00:00:00.0000000' AND '2020-09-10 23:59:59.0000000'\n\t--where COALESCE(cd.DateCompleted,c.DateSold) BETWEEN '2020-09-01 00:00:00.0000000' AND '2020-09-10 00:00:00.0000000'\n\n)\nselect  * from preAgg\n",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ContractID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ContractID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "CustomerID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesPersonEmployeeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "SalesPersonEmployeeID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "VoiceTarrif",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "VoiceTarrif",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "DateSold",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "DateSold",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "DateCompleted",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "DateCompleted",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "GradeStatus",
+											"type": "String"
+										},
+										"sink": {
+											"name": "GradeStatus",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "EmployeeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "EmployeeID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "FirstName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "FirstName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "LastName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "LastName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "deptName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "deptName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Revshare",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Revshare",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "RevsharePCT",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "RevsharePCT",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "isAdvanceable",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "isAdvanceable",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "TariffName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TariffName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MPN",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "MPN",
+											"type": "Int64"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "OnPremSQLGeneric",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "AzureDevDataBase",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Dev_KPI"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
