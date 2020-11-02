@@ -1,0 +1,19 @@
+{
+	"name": "AzureDevDataBase",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_SQL_DevDatahub",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dev_KPI"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "KPI",
+			"table": "stg_MasterTable"
+		}
+	}
+}

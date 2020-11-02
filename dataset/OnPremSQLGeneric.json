@@ -1,0 +1,15 @@
+{
+	"name": "OnPremSQLGeneric",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LN_ONPREM_vmdevdb",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "Dev_KPI"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	}
+}
