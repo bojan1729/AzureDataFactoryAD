@@ -51,43 +51,64 @@
 					"storedProcedureName": "[pin].[usp_DataStorePinLog]",
 					"storedProcedureParameters": {
 						"Actions": {
-							"value": "",
+							"value": {
+								"value": "activity('Lookup Proc').output.actions",
+								"type": "Expression"
+							},
 							"type": "Int32"
 						},
 						"ComponentName": {
-							"value": "",
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
 							"type": "String"
 						},
 						"ErrorMessage": {
-							"value": "",
+							"value": {
+								"value": "{activity('Lookup Proc').output.ErrorMessage}",
+								"type": "Expression"
+							},
 							"type": "String"
 						},
 						"ErrorNumber": {
-							"value": "",
+							"value": {
+								"value": "{activity('Lookup Proc').output.ErrorNumber}",
+								"type": "Expression"
+							},
 							"type": "Int32"
 						},
 						"ImportDate": {
-							"value": "",
+							"value": null,
 							"type": "DateTime"
 						},
 						"Inserts": {
-							"value": "",
+							"value": {
+								"value": "@activity('Lookup Proc').output.inserts",
+								"type": "Expression"
+							},
 							"type": "Int32"
 						},
 						"InsertTime": {
-							"value": "",
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							},
 							"type": "DateTime"
 						},
 						"PipelineRunID": {
-							"value": "",
+							"value": null,
 							"type": "String"
 						},
 						"TableName": {
-							"value": "",
+							"value": null,
 							"type": "String"
 						},
 						"Updates": {
-							"value": "",
+							"value": {
+								"value": "@activity('Lookup Proc').output.updates",
+								"type": "Expression"
+							},
 							"type": "Int32"
 						}
 					}
