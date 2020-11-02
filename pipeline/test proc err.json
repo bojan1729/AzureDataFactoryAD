@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Proc",
+				"name": "Lookup Proc",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -33,7 +33,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Proc",
+						"activity": "Lookup Proc",
 						"dependencyConditions": [
 							"Succeeded"
 						]
