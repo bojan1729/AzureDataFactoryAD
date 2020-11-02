@@ -8949,6 +8949,96 @@
 							},
 							"firstRowOnly": false
 						}
+					},
+					{
+						"name": "Log Entry",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Lookup Proc",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[pin].[usp_DataStorePinLog]",
+							"storedProcedureParameters": {
+								"Actions": {
+									"value": {
+										"value": "activity('Lookup Proc').output.actions",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"ComponentName": {
+									"value": {
+										"value": "@pipeline().Pipeline",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"ErrorMessage": {
+									"value": {
+										"value": "{activity('Lookup Proc').output.ErrorMessage}",
+										"type": "Expression"
+									},
+									"type": "String"
+								},
+								"ErrorNumber": {
+									"value": {
+										"value": "{activity('Lookup Proc').output.ErrorNumber}",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"ImportDate": {
+									"value": null,
+									"type": "DateTime"
+								},
+								"Inserts": {
+									"value": {
+										"value": "@activity('Lookup Proc').output.inserts",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								},
+								"InsertTime": {
+									"value": {
+										"value": "@utcnow()",
+										"type": "Expression"
+									},
+									"type": "DateTime"
+								},
+								"PipelineRunID": {
+									"value": null,
+									"type": "String"
+								},
+								"TableName": {
+									"value": null,
+									"type": "String"
+								},
+								"Updates": {
+									"value": {
+										"value": "@activity('Lookup Proc').output.updates",
+										"type": "Expression"
+									},
+									"type": "Int32"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"folder": {
