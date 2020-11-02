@@ -65,17 +65,11 @@
 							"type": "String"
 						},
 						"ErrorMessage": {
-							"value": {
-								"value": "@{activity('Lookup Proc').output.firstRow.ErrorMessage}",
-								"type": "Expression"
-							},
+							"value": null,
 							"type": "String"
 						},
 						"ErrorNumber": {
-							"value": {
-								"value": "@{activity('Lookup Proc').output.firstRow.ErrorNumber}",
-								"type": "Expression"
-							},
+							"value": null,
 							"type": "Int32"
 						},
 						"ImportDate": {
