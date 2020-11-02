@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Lookup Proc",
+				"name": "Proc",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -26,6 +26,75 @@
 						"type": "DatasetReference"
 					},
 					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Log Entry",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Proc",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[pin].[usp_DataStorePinLog]",
+					"storedProcedureParameters": {
+						"Actions": {
+							"value": "",
+							"type": "Int32"
+						},
+						"ComponentName": {
+							"value": "",
+							"type": "String"
+						},
+						"ErrorMessage": {
+							"value": "",
+							"type": "String"
+						},
+						"ErrorNumber": {
+							"value": "",
+							"type": "Int32"
+						},
+						"ImportDate": {
+							"value": "",
+							"type": "DateTime"
+						},
+						"Inserts": {
+							"value": "",
+							"type": "Int32"
+						},
+						"InsertTime": {
+							"value": "",
+							"type": "DateTime"
+						},
+						"PipelineRunID": {
+							"value": "",
+							"type": "String"
+						},
+						"TableName": {
+							"value": "",
+							"type": "String"
+						},
+						"Updates": {
+							"value": "",
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
 				}
 			}
 		],
