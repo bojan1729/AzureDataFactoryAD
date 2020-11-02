@@ -27,38 +27,6 @@
 					},
 					"firstRowOnly": false
 				}
-			},
-			{
-				"name": "Wait Success",
-				"type": "Wait",
-				"dependsOn": [
-					{
-						"activity": "Lookup Proc",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"waitTimeInSeconds": 1
-				}
-			},
-			{
-				"name": "Wait Failure",
-				"type": "Wait",
-				"dependsOn": [
-					{
-						"activity": "Lookup Proc",
-						"dependencyConditions": [
-							"Failed"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"waitTimeInSeconds": 1
-				}
 			}
 		],
 		"folder": {
