@@ -118,7 +118,7 @@
 				}
 			},
 			{
-				"name": "Filter On New Files",
+				"name": "Get Files",
 				"type": "Lookup",
 				"dependsOn": [
 					{
@@ -155,7 +155,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Filter On New Files",
+						"activity": "Get Files",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -164,7 +164,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Filter On New Files').output.value",
+						"value": "@activity('Get Files').output.value",
 						"type": "Expression"
 					},
 					"activities": [
