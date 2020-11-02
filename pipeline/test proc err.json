@@ -45,7 +45,7 @@
 				}
 			},
 			{
-				"name": "WaitFailuer",
+				"name": "Wait Failure",
 				"type": "Wait",
 				"dependsOn": [
 					{
