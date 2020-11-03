@@ -357,7 +357,7 @@
 				"schema": [],
 				"typeProperties": {
 					"schema": "KPI",
-					"table": "stg_MasterTable"
+					"table": "stg_MasterTable2"
 				}
 			},
 			"dependsOn": [
