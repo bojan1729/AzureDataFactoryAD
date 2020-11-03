@@ -8149,201 +8149,6 @@
 											}
 										}
 									]
-								},
-								{
-									"name": "Insert File Log - Get Zip Fail",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "Get Zip File",
-											"dependencyConditions": [
-												"Failed"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[staging].[usp_InsertFileLog]",
-										"storedProcedureParameters": {
-											"ComponentName": {
-												"value": {
-													"value": "@pipeline().Pipeline",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ErrorMessage": {
-												"value": {
-													"value": "@{activity('Get Zip File').output.errors[0].Message}",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileName": {
-												"value": {
-													"value": "@{item().FileName}",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileRefID": {
-												"value": {
-													"value": "@{item().FileRefID}",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileSeqno": {
-												"value": {
-													"value": "@{item().FileSeqNo}",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"FileType": {
-												"value": {
-													"value": "@{item().FileType}",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"ImportDate": {
-												"value": {
-													"value": "@{item().ImportDate}",
-													"type": "Expression"
-												},
-												"type": "DateTime"
-											},
-											"InsertRows": {
-												"value": {
-													"value": "0",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"InsertTime": {
-												"value": {
-													"value": "@utcnow()",
-													"type": "Expression"
-												},
-												"type": "DateTime"
-											},
-											"PipelineRunID": {
-												"value": {
-													"value": "@pipeline().parameters.PPL_RunID",
-													"type": "Expression"
-												},
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "LN_SQL_DevDatahub",
-										"type": "LinkedServiceReference"
-									}
-								},
-								{
-									"name": "Insert File Log - Get Zip Succ",
-									"type": "SqlServerStoredProcedure",
-									"dependsOn": [
-										{
-											"activity": "Get Zip File",
-											"dependencyConditions": [
-												"Succeeded"
-											]
-										}
-									],
-									"policy": {
-										"timeout": "7.00:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"storedProcedureName": "[[staging].[usp_InsertFileLog]",
-										"storedProcedureParameters": {
-											"ComponentName": {
-												"value": {
-													"value": "@pipeline().Pipeline",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"ErrorMessage": {
-												"value": null,
-												"type": "String"
-											},
-											"FileName": {
-												"value": {
-													"value": "@{item().FileName}",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileRefID": {
-												"value": {
-													"value": "@{item().FileRefID}",
-													"type": "Expression"
-												},
-												"type": "String"
-											},
-											"FileSeqno": {
-												"value": {
-													"value": "@{item().FileSeqNo}",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"FileType": {
-												"value": {
-													"value": "@{item().FileType}",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"ImportDate": {
-												"value": {
-													"value": "@{item().ImportDate}",
-													"type": "Expression"
-												},
-												"type": "DateTime"
-											},
-											"InsertRows": {
-												"value": {
-													"value": "0",
-													"type": "Expression"
-												},
-												"type": "Int32"
-											},
-											"InsertTime": {
-												"value": {
-													"value": "@utcnow()",
-													"type": "Expression"
-												},
-												"type": "DateTime"
-											},
-											"PipelineRunID": {
-												"value": {
-													"value": "@pipeline().parameters.PPL_RunID",
-													"type": "Expression"
-												},
-												"type": "String"
-											}
-										}
-									},
-									"linkedServiceName": {
-										"referenceName": "LN_SQL_DevDatahub",
-										"type": "LinkedServiceReference"
-									}
 								}
 							]
 						}
@@ -8947,7 +8752,7 @@
 								"type": "DatasetReference",
 								"parameters": {}
 							},
-							"firstRowOnly": false
+							"firstRowOnly": true
 						}
 					},
 					{
@@ -8974,7 +8779,7 @@
 							"storedProcedureParameters": {
 								"Actions": {
 									"value": {
-										"value": "activity('Lookup Proc').output.actions",
+										"value": "@{activity('Lookup Proc').output.firstRow.actions}",
 										"type": "Expression"
 									},
 									"type": "Int32"
@@ -8988,14 +8793,14 @@
 								},
 								"ErrorMessage": {
 									"value": {
-										"value": "{activity('Lookup Proc').output.ErrorMessage}",
+										"value": "@{activity('Lookup Proc').output.firstRow.ErrorMessage}",
 										"type": "Expression"
 									},
 									"type": "String"
 								},
 								"ErrorNumber": {
 									"value": {
-										"value": "{activity('Lookup Proc').output.ErrorNumber}",
+										"value": "@{activity('Lookup Proc').output.firstRow.ErrorNumber}",
 										"type": "Expression"
 									},
 									"type": "Int32"
@@ -9006,7 +8811,7 @@
 								},
 								"Inserts": {
 									"value": {
-										"value": "@activity('Lookup Proc').output.inserts",
+										"value": "@{activity('Lookup Proc').output.firstRow.inserts}",
 										"type": "Expression"
 									},
 									"type": "Int32"
@@ -9028,7 +8833,7 @@
 								},
 								"Updates": {
 									"value": {
-										"value": "@activity('Lookup Proc').output.updates",
+										"value": "@{activity('Lookup Proc').output.firstRow.updates}",
 										"type": "Expression"
 									},
 									"type": "Int32"
@@ -9057,7 +8862,14 @@
 					{
 						"name": "Copy to staging table",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Truncate staging table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -9257,6 +9069,26 @@
 								"parameters": {}
 							}
 						]
+					},
+					{
+						"name": "Truncate staging table",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[KPI].[Truncate_KPI_Staging]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"folder": {
