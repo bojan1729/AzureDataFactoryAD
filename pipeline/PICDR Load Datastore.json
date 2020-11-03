@@ -1643,7 +1643,7 @@
 													"storedProcedureParameters": {
 														"Actions": {
 															"value": {
-																"value": "@{activity('Load - SubscriberBundle').output.firstRow.actions}",
+																"value": "@{activity('Load - SubscriptionDataConnection').output.firstRow.actions}",
 																"type": "Expression"
 															},
 															"type": "Int32"
@@ -1657,14 +1657,14 @@
 														},
 														"ErrorMessage": {
 															"value": {
-																"value": "@{activity('Load - SubscriberBundle').output.firstRow.ErrorMessage}",
+																"value": "@{activity('Load - SubscriptionDataConnection').output.firstRow.ErrorMessage}",
 																"type": "Expression"
 															},
 															"type": "String"
 														},
 														"ErrorNumber": {
 															"value": {
-																"value": "@{activity('Load - SubscriberBundle').output.firstRow.ErrorNumber}",
+																"value": "@{activity('Load - SubscriptionDataConnection').output.firstRow.ErrorNumber}",
 																"type": "Expression"
 															},
 															"type": "Int32"
@@ -1685,7 +1685,7 @@
 														},
 														"Inserts": {
 															"value": {
-																"value": "@{activity('Load - SubscriberBundle').output.firstRow.inserts}",
+																"value": "@{activity('Load - SubscriptionDataConnection').output.firstRow.inserts}",
 																"type": "Expression"
 															},
 															"type": "Int32"
@@ -1713,7 +1713,7 @@
 														},
 														"Updates": {
 															"value": {
-																"value": "@{activity('Load - SubscriberBundle').output.firstRow.updates}",
+																"value": "@{activity('Load - SubscriptionDataConnection').output.firstRow.updates}",
 																"type": "Expression"
 															},
 															"type": "Int32"
