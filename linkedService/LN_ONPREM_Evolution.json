@@ -1,0 +1,23 @@
+{
+	"name": "LN_ONPREM_Evolution",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"connectionString": "Integrated Security=False;Data Source=vm-db;Initial Catalog=Evolution;User ID=dufrain",
+			"password": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "LN_KV_DufrainVault",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "ProdSQLPassword"
+			}
+		},
+		"connectVia": {
+			"referenceName": "OnPremRuntime",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}
