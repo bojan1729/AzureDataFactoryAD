@@ -185,7 +185,7 @@
 						},
 						"ErrorMessage": {
 							"value": {
-								"value": "ERR - see log file",
+								"value": "ERR Run - see detailed log",
 								"type": "Expression"
 							},
 							"type": "String"
