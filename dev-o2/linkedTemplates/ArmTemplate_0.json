@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_BLOB_addufrain1'"
 		},
+		"LN_ONPREM_Evolution_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_Evolution'"
+		},
 		"LN_ONPREM_vmdevdb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_vmdevdb'"
@@ -218,6 +222,34 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
+				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LN_ONPREM_Evolution')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "SqlServer",
+				"typeProperties": {
+					"connectionString": "[parameters('LN_ONPREM_Evolution_connectionString')]",
+					"password": {
+						"type": "AzureKeyVaultSecret",
+						"store": {
+							"referenceName": "LN_KV_DufrainVault",
+							"type": "LinkedServiceReference"
+						},
+						"secretName": "ProdSQLPassword"
+					}
+				},
+				"connectVia": {
+					"referenceName": "OnPremRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/OnPremRuntime')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
 			]
 		},
@@ -638,47 +670,6 @@
 						"container": "picdr"
 					}
 				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_ZipSource')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_BLOB_addufrain1",
-					"type": "LinkedServiceReference"
-				},
-				"parameters": {
-					"PDS_FileName": {
-						"type": "string"
-					}
-				},
-				"folder": {
-					"name": "Dev_PICDR"
-				},
-				"annotations": [],
-				"type": "DelimitedText",
-				"typeProperties": {
-					"location": {
-						"type": "AzureBlobStorageLocation",
-						"fileName": {
-							"value": "@concat(dataset().PDS_FileName, '.ZIP')",
-							"type": "Expression"
-						},
-						"folderPath": "filezip",
-						"container": "picdr"
-					},
-					"columnDelimiter": ",",
-					"compressionCodec": "ZipDeflate",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": ""
-				},
-				"schema": []
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"

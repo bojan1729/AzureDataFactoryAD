@@ -11,6 +11,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_BLOB_addufrain1'"
 		},
+		"LN_ONPREM_Evolution_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_Evolution'"
+		},
 		"LN_ONPREM_vmdevdb_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'LN_ONPREM_vmdevdb'"
@@ -92,6 +96,9 @@
 					},
 					"LN_BLOB_addufrain1_connectionString": {
 						"value": "[parameters('LN_BLOB_addufrain1_connectionString')]"
+					},
+					"LN_ONPREM_Evolution_connectionString": {
+						"value": "[parameters('LN_ONPREM_Evolution_connectionString')]"
 					},
 					"LN_ONPREM_vmdevdb_connectionString": {
 						"value": "[parameters('LN_ONPREM_vmdevdb_connectionString')]"

@@ -8,6 +8,9 @@
 		"LN_BLOB_addufrain1_connectionString": {
 			"value": ""
 		},
+		"LN_ONPREM_Evolution_connectionString": {
+			"value": ""
+		},
 		"LN_ONPREM_vmdevdb_connectionString": {
 			"value": ""
 		},
