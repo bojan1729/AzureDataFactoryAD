@@ -3,11 +3,11 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy to staging table",
+				"name": "Copy to fact staging table",
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Truncate staging table",
+						"activity": "Truncate fact staging table",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -332,7 +332,356 @@
 				]
 			},
 			{
-				"name": "Truncate staging table",
+				"name": "Truncate fact staging table",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[KPI].[Truncate_KPI_Staging]"
+				},
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Copy to fact staging table_copy1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Truncate dim_product staging table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\twhere cp.RemovedDate is null\n\tand cp.AddedDate >= '2018-01-01 00:00:00.0000000'\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"sink": {
+						"type": "AzureSqlSink"
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "ContractID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "ContractID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "CustomerID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "CustomerType",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CustomerType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "MPN",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "MPN",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesPersonEmployeeID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "SalesPersonEmployeeID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "VoiceTarrif",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "VoiceTarrif",
+									"type": "Boolean"
+								}
+							},
+							{
+								"source": {
+									"name": "DateSold",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "DateSold",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "DateCompleted",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "DateCompleted",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "GradeStatus",
+									"type": "String"
+								},
+								"sink": {
+									"name": "GradeStatus",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "EmployeeID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "EmployeeID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesPersonName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SalesPersonName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "departmentName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "departmentName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Revshare",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "Revshare",
+									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "RevsharePCT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "RevsharePCT",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "TariffGroup",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TariffGroup",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "isAdvanceable",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "isAdvanceable",
+									"type": "Boolean"
+								}
+							},
+							{
+								"source": {
+									"name": "CostCenterCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CostCenterCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesTeam",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SalesTeam",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TariffType",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TariffType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TariffCategory",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TariffCategory",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BusinessUnit",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BusinessUnit",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "ProductID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductTerm",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "ProductTerm",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductGroup",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductGroup",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductType",
+									"type": "String"
+								},
+								"sink": {
+									"name": "ProductType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PhoneName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "PhoneName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "PhoneAddedDate",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "PhoneAddedDate",
+									"type": "DateTime"
+								}
+							}
+						]
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "OnPremSQLGeneric",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "AzureDevDataBase",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Truncate dim_product staging table",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [],
 				"policy": {
