@@ -320,7 +320,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "DevOnPremSQLGeneric",
+						"referenceName": "LiveOnPremSQLGeneric",
 						"type": "DatasetReference"
 					}
 				],
