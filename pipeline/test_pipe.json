@@ -334,7 +334,14 @@
 			{
 				"name": "Truncate all staging tables",
 				"type": "SqlServerStoredProcedure",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Copy to fact staging table",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
@@ -354,14 +361,7 @@
 			{
 				"name": "Copy to dim_product staging table",
 				"type": "Copy",
-				"dependsOn": [
-					{
-						"activity": "Truncate all staging tables",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"policy": {
 					"timeout": "7.00:00:00",
 					"retry": 0,
