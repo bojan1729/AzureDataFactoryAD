@@ -373,7 +373,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureDevDataBase_stg_dim_products')]",
+			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_dim_products')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -382,7 +382,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_KPI"
+					"name": "Dev_KPI/Destinations"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -422,7 +422,7 @@
 				],
 				"typeProperties": {
 					"schema": "KPI",
-					"table": "stg_dim_products"
+					"table": "stg_dim_product"
 				}
 			},
 			"dependsOn": [
@@ -430,7 +430,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureDevDataBase_stg_master_kpi')]",
+			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_fact_master')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -439,14 +439,14 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_KPI"
+					"name": "Dev_KPI/Destinations"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
 				"typeProperties": {
 					"schema": "KPI",
-					"table": "stg_MasterTable2"
+					"table": "stg_fact_master"
 				}
 			},
 			"dependsOn": [

@@ -1,0 +1,626 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "dev-o2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/test_pipe')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy to fact staging table",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy to dim_product staging table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "WITH ContractEventLinks AS \n(\n\tSELECT \n\t\tContractID\n\t\t,EventTypeID\n\t\t,EventDateTime \n\tFROM [Evolution].[Crm].[ContractEventLink]  \n\tWHERE EventTypeID IN (3, 4)\n)\n,ContractCosts AS\n(\n\tSELECT\n\t\tContractProductID\n\t\t,CostTypeID\n\t\t,Amount\n\t\t,AffectsHardwareFund\n\tFROM [Evolution].[Crm].[ContractCost] \n\tWHERE RemovedDate IS NULL AND (CostTypeID IN (8, 2, 9, 34, 35, 36, 37, 38, 39) OR AffectsHardwareFund = 1)\n)\n,SBIDates AS\n(\n\tSELECT\n\t\tUSI\n\t\t,MPN\n\t\t,rp.AccountNumber\n\t\t,MAX(p.PeriodDate) SBIDate\n\tFROM [Evolution].[SBI].[Period] p \n\tINNER JOIN [Evolution].[SBI].[FileGroup] fg  ON p.PeriodID = fg.PeriodID\n\tINNER JOIN [Evolution].[SBI].[File] f  ON fg.FileGroupID = f.FileGroupID\n\tINNER JOIN [Evolution].[SBI].[Summary] s  ON s.FileID = f.FileID\n\tINNER JOIN [Evolution].[SBI].[RevsharePayment] rp  ON rp.SummaryID = s.SummaryID\n\tGROUP BY USI, MPN, rp.AccountNumber\n)\n,Tariffs AS\n(\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,pr.ProductID\n\t\t,pr.[Name] AS ProductName\n\t\t,gr.[Name] AS ProductGroup\n\t\t,tt.Term\n\t\t,dp.RevsharePct\n\t\t,dp.UpgradeTariff\n\t\t--,dp.\n\t\t,ta.Legacy\n\t\t,pt.Name ProductType\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\tleft join [Evolution].crm.TariffTerm tt on tt.TariffTermID = pr.TariffTermID\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\tAND gr.ProductTypeID = 1\n\tleft join [Evolution].Product.Type pt on pt.TypeID = gr.ProductTypeID\n\n\tLEFT JOIN --get the most recent version of tariff(?)\n\t(\n\t\tSELECT\n\t\tTariffCode, PackageCode, Legacy, ROW_NUMBER() OVER (PARTITION BY TariffCode, PackageCode ORDER BY TariffID DESC) AS RowNum\n\t\tFROM Evolution.EService.Tariff \n\t\tWHERE [Version] = (SELECT TOP 1 [Version] FROM Evolution.EService.Tariff  WHERE [Version] IS NOT NULL ORDER BY 1 DESC)\n\t) ta ON ta.TariffCode = dp.TariffCode AND ta.PackageCode = dp.PackageCode AND ta.RowNum = 1\n\tWHERE cp.RemovedDate IS NULL\n)\n,Phones as (\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.[Name] PhoneName\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\tAND gr.ProductTypeID = 2\n\twhere cp.RemovedDate is null\n)\n\n, preAgg AS (\n\n\n\tSELECT  \n\t\tc.ContractID\n\t\t,c.CustomerID\n\t\t,ct.Name CustomerType\n\t\t,try_cast(c.ContractNumber as BIGINT) [MPN]\n\t\t,c.SalesPersonEmployeeID\n\t\t,case when tt.ConnectionTypeID = 8 then 1 else 0 end as VoiceTarrif\n\t\t,cd.DateSold\n\t\t,cd.DateCompleted\n\t\t,g.Name [GradeStatus]\n\t\t,e.EmployeeID\n\t\t,CONCAT(e.FirstName,' ',e.LastName) SalesPersonName\n\t\t,d.Name departmentName\n\t\t,cc.Amount Revshare\n\t\t,t.RevsharePCT\n\t\t,case \n\t\t\twhen t.RevsharePCT = 35.00 then 'SIMMO'\n\t\t\twhen t.RevsharePct = 48.00 then 'PROMO'\n\t\t\twhen t.RevsharePct = 56.00 then 'Advanceable'\n\t\t\telse 'Unmapped'\n\t\tend as TariffGroup\n\t\t,case \n\t\t\twhen t.RevsharePCT = 56.00 then 1 \n\t\t\telse 0 \n\t\tend as isAdvanceable\n\t\t,COC.Code CostCenterCode\n\t\t,case \n\t\t\twhen COC.Code = 'NWR' then 'New World Revenue'\n\t\t\twhen coc.code = 'RET' then 'Retentions'\n\t\t\twhen coc.code = 'REN' then 'Renewals'\n\t\t\twhen coc.code = 'NCN' then 'New Connections'\n\t\t\twhen coc.code = 'REF' then 'Refresh'\n\t\t\twhen coc.code = 'LOW' then 'Low Spend'\n\t\t\twhen coc.code = 'BIZ' then 'Business Upgrades'\n\t\t\telse 'Unmapped'\n\t\tEND AS SalesTeam\n\t\t,tt.Name TariffType\n\t\t,case\n\t\t\twhen tt.Name like '%Voice%' then 'Voice'\n\t\t\twhen tt.Name like '%Data%' then 'Data'\n\t\t\twhen tt.Name like '%Fixed Line Services%' then 'Fixed Line'\n\t\t\twhen tt.Name like 'Additional' then tt.Name\n\t\t\twhen tt.Name like 'Cloud Service' then 'Digital'\n\t\t\telse 'Unmapped'\n\t\tEND AS TariffCategory\n\t\t,case\n\t\t\twhen ct.Name = 'SOHO' then 'Core Mobile'\n\t\t\twhen ct.Name = 'Mid-Market & Enterprise' then 'Midmarket'\n\t\t\telse 'Other'\n\t\tend as BusinessUnit\n\t,t.ProductID\n\t,t.Term ProductTerm\n\t,t.ProductName \n\t,t.ProductGroup\n\t,t.ProductType\n\t,ph.PhoneName\n\t,ph.AddedDate PhoneAddedDate\n\n\tFROM Evolution.[Crm].[Contract] c\n\t\n\tleft join Evolution.crm.customer cu \n\t\ton cu.CustomerID = c.CustomerID\n\t\n\tleft join Evolution.[Crm].[CustomerType] ct \n\t\ton ct.CustomerTypeID = cu.CustomerTypeID\n\t\n\tleft join [Datastore].[Store].[ContractDate] cd \n\t\ton cd.ContractID = c.ContractID\n\t\n\tleft join Evolution.[HR].[Employee] e \n\t\ton e.EmployeeID = c.SalesPersonEmployeeID\n\t\n\tleft join Evolution.[HR].[Employee] am\n\t\ton AM.EmployeeID = c.SalesPersonEmployeeID\n\t\n\tleft join [Evolution].[HR].[EmployeeDepartmentLink] edl \n\t\ton edl.EmployeeID = e.EmployeeID\n\t\tand edl.StartDate <= c.DateSold\n\t\tand (edl.EndDate is null or edl.EndDate > c.DateSold) --which department was the employee in at the point of sale\n\t\n\tleft join Evolution.hr.Department d \n\t\ton edl.DepartmentID = d.DepartmentID\n\t\n\tLEFT JOIN [Evolution].[Financial].[CostCentre]\tCOC \n\t\tON\tCOC.CostCentreID = D.CostCentreID\t\t\t\t\t\t\t\t\t\t\t\t\n\t\n\tleft join Tariffs t \n\t\ton t.ContractID = c.ContractID\n\t\n\tleft join ContractCosts cc \n\t\ton cc.ContractProductID = t.ContractProductID\n\t\t\t\t\t\t\t\tand cc.CostTypeID = 9\n\t\n\tleft join [Evolution].[Crm].[TariffType] tt \n\t\ton tt.TariffTypeID = c.TariffTypeID\n\t\n\tleft join [Evolution].[Crm].[ProvisioningStatus] PS\n\t\ton ps.ProvisioningStatusID = c.ProvisioningStatusID\n\t\n\tleft JOIN [Evolution].[Crm].[Grade] g\n\t\tON g.GradeID = ps.GradeID\n\n\tLEFT JOIN Phones PH \n\t\ton ph.ContractID = c.ContractID\n\t\tand ph.AddedDate >= c.DateSold\n\n\n\twhere c.DateSold >  '2018-01-01 00:00:00.0000000'\n\t--where COALESCE(cd.DateCompleted,c.DateSold) BETWEEN '2020-09-01 00:00:00.0000000' AND '2020-09-10 00:00:00.0000000'\n\n)\n--select distinct PhoneName from preAgg\nselect * from preAgg",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ContractID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ContractID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "CustomerID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CustomerType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MPN",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "MPN",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesPersonEmployeeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "SalesPersonEmployeeID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "VoiceTarrif",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "VoiceTarrif",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "DateSold",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "DateSold",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "DateCompleted",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "DateCompleted",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "GradeStatus",
+											"type": "String"
+										},
+										"sink": {
+											"name": "GradeStatus",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "EmployeeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "EmployeeID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesPersonName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesPersonName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "departmentName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "departmentName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Revshare",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Revshare",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "RevsharePCT",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "RevsharePCT",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "TariffGroup",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TariffGroup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "isAdvanceable",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "isAdvanceable",
+											"type": "Boolean"
+										}
+									},
+									{
+										"source": {
+											"name": "CostCenterCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CostCenterCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesTeam",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesTeam",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TariffType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TariffType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TariffCategory",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TariffCategory",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "BusinessUnit",
+											"type": "String"
+										},
+										"sink": {
+											"name": "BusinessUnit",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProductID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductTerm",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProductTerm",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductGroup",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductGroup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PhoneName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "PhoneName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "PhoneAddedDate",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "PhoneAddedDate",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DevOnPremSQLGeneric",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dest_azure_dev_stg_fact_master",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Truncate all staging tables",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[KPI].[Truncate_KPI_Staging]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Copy to dim_product staging table",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Truncate all staging tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\twhere cp.RemovedDate is null\n\tand cp.addedDate >= dateadd(month,-2,getdate()) ",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ContractID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ContractID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ContractProductID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ContractProductID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "AddedDate",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "AddedDate",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProductID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductGroup",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductGroup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductTypeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProducTypeID",
+											"type": "Int32"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "LiveOnPremSQLGeneric",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dest_azure_dev_stg_dim_products",
+								"type": "DatasetReference"
+							}
+						]
+					}
+				],
+				"folder": {
+					"name": "Dev_KPI"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DevOnPremSQLGeneric')]",
+				"[concat(variables('factoryId'), '/datasets/dest_azure_dev_stg_fact_master')]",
+				"[concat(variables('factoryId'), '/datasets/LiveOnPremSQLGeneric')]",
+				"[concat(variables('factoryId'), '/datasets/dest_azure_dev_stg_dim_products')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_dim_products')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_KPI/Destinations"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ContractID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ContractProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "AddedDate",
+						"type": "datetime2",
+						"scale": 3
+					},
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductType",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductGroup",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "KPI",
+					"table": "stg_dim_product"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_fact_master')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_KPI/Destinations"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "KPI",
+					"table": "stg_fact_master"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DevOnPremSQLGeneric')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_ONPREM_vmdevdb",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_KPI/Sources"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LiveOnPremSQLGeneric')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_ONPREM_Evolution",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_KPI/Sources"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": []
+			},
+			"dependsOn": []
+		}
+	]
+}

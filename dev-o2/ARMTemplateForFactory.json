@@ -12970,7 +12970,14 @@
 					{
 						"name": "Copy to fact staging table",
 						"type": "Copy",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Copy to dim_product staging table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"policy": {
 							"timeout": "7.00:00:00",
 							"retry": 0,
@@ -13278,21 +13285,21 @@
 						},
 						"inputs": [
 							{
-								"referenceName": "OnPremSQLGeneric",
+								"referenceName": "DevOnPremSQLGeneric",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "AzureDevDataBase_stg_master_kpi",
+								"referenceName": "dest_azure_dev_stg_fact_master",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						]
 					},
 					{
-						"name": "Truncate fact staging table",
+						"name": "Truncate all staging tables",
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [],
 						"policy": {
@@ -13316,7 +13323,7 @@
 						"type": "Copy",
 						"dependsOn": [
 							{
-								"activity": "Truncate fact staging table",
+								"activity": "Truncate all staging tables",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -13333,7 +13340,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\twhere cp.RemovedDate is null\n\tand cp.AddedDate >= '2018-01-01 00:00:00.0000000'\n",
+								"sqlReaderQuery": "\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\twhere cp.RemovedDate is null\n\tand cp.addedDate >= dateadd(month,-2,getdate()) ",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -13413,20 +13420,30 @@
 											"name": "ProductGroup",
 											"type": "String"
 										}
+									},
+									{
+										"source": {
+											"name": "ProductTypeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProducTypeID",
+											"type": "Int32"
+										}
 									}
 								]
 							}
 						},
 						"inputs": [
 							{
-								"referenceName": "OnPremSQLGeneric",
+								"referenceName": "LiveOnPremSQLGeneric",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
 						],
 						"outputs": [
 							{
-								"referenceName": "AzureDevDataBase_stg_dim_products",
+								"referenceName": "dest_azure_dev_stg_dim_products",
 								"type": "DatasetReference",
 								"parameters": {}
 							}
@@ -13439,10 +13456,11 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/OnPremSQLGeneric')]",
-				"[concat(variables('factoryId'), '/datasets/AzureDevDataBase_stg_master_kpi')]",
+				"[concat(variables('factoryId'), '/datasets/DevOnPremSQLGeneric')]",
+				"[concat(variables('factoryId'), '/datasets/dest_azure_dev_stg_fact_master')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]",
-				"[concat(variables('factoryId'), '/datasets/AzureDevDataBase_stg_dim_products')]"
+				"[concat(variables('factoryId'), '/datasets/LiveOnPremSQLGeneric')]",
+				"[concat(variables('factoryId'), '/datasets/dest_azure_dev_stg_dim_products')]"
 			]
 		},
 		{
@@ -13469,7 +13487,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureDevDataBase_stg_dim_products')]",
+			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_dim_products')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -13478,7 +13496,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_KPI"
+					"name": "Dev_KPI/Destinations"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
@@ -13518,7 +13536,7 @@
 				],
 				"typeProperties": {
 					"schema": "KPI",
-					"table": "stg_dim_products"
+					"table": "stg_dim_product"
 				}
 			},
 			"dependsOn": [
@@ -13526,7 +13544,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/AzureDevDataBase_stg_master_kpi')]",
+			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_fact_master')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -13535,14 +13553,14 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_KPI"
+					"name": "Dev_KPI/Destinations"
 				},
 				"annotations": [],
 				"type": "AzureSqlTable",
 				"schema": [],
 				"typeProperties": {
 					"schema": "KPI",
-					"table": "stg_MasterTable2"
+					"table": "stg_fact_master"
 				}
 			},
 			"dependsOn": [
@@ -14759,7 +14777,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/OnPremSQLGeneric')]",
+			"name": "[concat(parameters('factoryName'), '/DevOnPremSQLGeneric')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -14768,7 +14786,7 @@
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_KPI"
+					"name": "Dev_KPI/Sources"
 				},
 				"annotations": [],
 				"type": "SqlServerTable",
@@ -15055,6 +15073,27 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/LiveOnPremSQLGeneric')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_ONPREM_Evolution",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_KPI/Sources"
+				},
+				"annotations": [],
+				"type": "SqlServerTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_ONPREM_Evolution')]"
+			]
 		}
 	]
 }
