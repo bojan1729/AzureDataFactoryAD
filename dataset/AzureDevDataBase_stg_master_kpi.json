@@ -1,5 +1,5 @@
 {
-	"name": "AzureDevDataBase",
+	"name": "AzureDevDataBase_stg_master_kpi",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LN_SQL_DevDatahub",

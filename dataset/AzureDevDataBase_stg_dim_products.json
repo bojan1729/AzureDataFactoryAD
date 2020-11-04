@@ -10,7 +10,40 @@
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
-		"schema": [],
+		"schema": [
+			{
+				"name": "ContractID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ContractProductID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "AddedDate",
+				"type": "datetime2",
+				"scale": 3
+			},
+			{
+				"name": "ProductID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "ProductName",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductType",
+				"type": "nvarchar"
+			},
+			{
+				"name": "ProductGroup",
+				"type": "nvarchar"
+			}
+		],
 		"typeProperties": {
 			"schema": "KPI",
 			"table": "stg_dim_products"
