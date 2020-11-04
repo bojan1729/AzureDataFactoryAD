@@ -6,7 +6,7 @@
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Dev_KPI"
+			"name": "Dev_KPI/Sources"
 		},
 		"annotations": [],
 		"type": "SqlServerTable",

@@ -1,12 +1,12 @@
 {
-	"name": "AzureDevDataBase_stg_dim_products",
+	"name": "dest_azure_dev_stg_dim_products",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LN_SQL_DevDatahub",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Dev_KPI"
+			"name": "Dev_KPI/Destinations"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
@@ -46,7 +46,7 @@
 		],
 		"typeProperties": {
 			"schema": "KPI",
-			"table": "stg_dim_products"
+			"table": "stg_dim_product"
 		}
 	}
 }

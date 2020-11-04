@@ -319,13 +319,13 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureDevDataBase_stg_master_kpi",
+						"referenceName": "dest_azure_dev_stg_fact_master",
 						"type": "DatasetReference"
 					}
 				]
 			},
 			{
-				"name": "Truncate fact staging table",
+				"name": "Truncate all staging tables",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [],
 				"policy": {
@@ -349,7 +349,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Truncate fact staging table",
+						"activity": "Truncate all staging tables",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -366,7 +366,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\twhere cp.RemovedDate is null\n\tand cp.AddedDate >= '2018-01-01 00:00:00.0000000'\n",
+						"sqlReaderQuery": "\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\twhere cp.RemovedDate is null\n\tand cp.AddedDate >= '2018-01-01 00:00:00.0000000'",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -446,6 +446,16 @@
 									"name": "ProductGroup",
 									"type": "String"
 								}
+							},
+							{
+								"source": {
+									"name": "ProductTypeID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "ProducTypeID",
+									"type": "Int32"
+								}
 							}
 						]
 					}
@@ -458,7 +468,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "AzureDevDataBase_stg_dim_products",
+						"referenceName": "dest_azure_dev_stg_dim_products",
 						"type": "DatasetReference"
 					}
 				]

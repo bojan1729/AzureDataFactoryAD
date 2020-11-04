@@ -1,19 +1,19 @@
 {
-	"name": "AzureDevDataBase_stg_master_kpi",
+	"name": "dest_azure_dev_stg_fact_master",
 	"properties": {
 		"linkedServiceName": {
 			"referenceName": "LN_SQL_DevDatahub",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
-			"name": "Dev_KPI"
+			"name": "Dev_KPI/Destinations"
 		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [],
 		"typeProperties": {
 			"schema": "KPI",
-			"table": "stg_MasterTable2"
+			"table": "stg_fact_master"
 		}
 	}
 }
