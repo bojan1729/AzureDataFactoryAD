@@ -1,8 +1,8 @@
 {
-	"name": "DevOnPremSQLGeneric",
+	"name": "LiveOnPremSQLGeneric",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "LN_ONPREM_vmdevdb",
+			"referenceName": "LN_ONPREM_Evolution",
 			"type": "LinkedServiceReference"
 		},
 		"folder": {
