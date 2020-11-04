@@ -12841,7 +12841,7 @@
 											"type": "Int32"
 										},
 										"sink": {
-											"name": "ProducTypeID",
+											"name": "ProductTypeID",
 											"type": "Int32"
 										}
 									}
