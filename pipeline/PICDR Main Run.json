@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "PICDR Load Datastore",
+				"name": "PICDR Load Datastore Parallel",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -104,7 +104,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore",
+						"activity": "PICDR Load Datastore Parallel",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -155,7 +155,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore",
+						"activity": "PICDR Load Datastore Parallel",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -198,6 +198,39 @@
 							"type": "Int32"
 						}
 					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Check Seq No",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Update ETL Log Entry Success",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Update ETL Log Entry Failure",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[staging].[usp_CheckSeqNo]"
 				},
 				"linkedServiceName": {
 					"referenceName": "LN_SQL_DevDatahub",
