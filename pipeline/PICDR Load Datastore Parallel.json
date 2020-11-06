@@ -381,11 +381,11 @@
 								},
 								"ifFalseActivities": [
 									{
-										"name": "Whitespace Cleaning",
+										"name": "Whitespace Cleaning1",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [
 											{
-												"activity": "Load Stage - Cleaned",
+												"activity": "Load Stage - Cleaned1",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -424,11 +424,11 @@
 										}
 									},
 									{
-										"name": "Load Stage - Cleaned",
+										"name": "Load Stage - Cleaned1",
 										"type": "Copy",
 										"dependsOn": [
 											{
-												"activity": "Truncate Cleaned",
+												"activity": "Truncate Cleaned1",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -496,11 +496,11 @@
 										]
 									},
 									{
-										"name": "Insert File Log - Cleaned Succ",
+										"name": "Insert File Log - Cleaned Succ1",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [
 											{
-												"activity": "Whitespace Cleaning",
+												"activity": "Whitespace Cleaning1",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -565,7 +565,7 @@
 												},
 												"InsertRows": {
 													"value": {
-														"value": "@if(equals(item().FileType,7), activity('Load Stage - Cleaned').output.rowsCopied, sub(activity('Load Stage - Cleaned').output.rowsCopied, 1))",
+														"value": "@if(equals(item().FileType,7), activity('Load Stage - Cleaned1').output.rowsCopied, sub(activity('Load Stage - Cleaned1').output.rowsCopied, 1))",
 														"type": "Expression"
 													},
 													"type": "Int32"
@@ -592,7 +592,7 @@
 										}
 									},
 									{
-										"name": "Truncate Cleaned",
+										"name": "Truncate Cleaned1",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [],
 										"policy": {
@@ -628,11 +628,11 @@
 										}
 									},
 									{
-										"name": "Insert File Log - Cleaned Fail",
+										"name": "Insert File Log - Cleaned Fail1",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [
 											{
-												"activity": "Load Stage - Cleaned",
+												"activity": "Load Stage - Cleaned1",
 												"dependencyConditions": [
 													"Failed"
 												]
@@ -658,7 +658,7 @@
 												},
 												"ErrorMessage": {
 													"value": {
-														"value": "@{activity('Load Stage - Cleaned').output.errors[0].Message}",
+														"value": "@{activity('Load Stage - Cleaned1').output.errors[0].Message}",
 														"type": "Expression"
 													},
 													"type": "String"
@@ -700,7 +700,7 @@
 												},
 												"InsertRows": {
 													"value": {
-														"value": "@activity('Load Stage - Cleaned').output.rowsCopied",
+														"value": "@activity('Load Stage - Cleaned1').output.rowsCopied",
 														"type": "Expression"
 													},
 													"type": "Int32"
