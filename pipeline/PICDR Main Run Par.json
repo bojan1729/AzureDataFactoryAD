@@ -1,9 +1,9 @@
 {
-	"name": "PICDR Main Run Parallel",
+	"name": "PICDR Main Run Par",
 	"properties": {
 		"activities": [
 			{
-				"name": "PICDR Load Datastore Parallel",
+				"name": "PICDR Load Datastore Par",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Datastore",
+						"referenceName": "PICDR Load Datastore Par",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -52,7 +52,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Datastore Parallel",
+									"value": "PICDR Load Datastore Par",
 									"type": "Expression"
 								}
 							},
@@ -104,7 +104,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore Parallel",
+						"activity": "PICDR Load Datastore Par",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -155,7 +155,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore Parallel",
+						"activity": "PICDR Load Datastore Par",
 						"dependencyConditions": [
 							"Failed"
 						]
