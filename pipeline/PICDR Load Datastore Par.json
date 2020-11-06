@@ -154,14 +154,7 @@
 			{
 				"name": "File Iteration",
 				"type": "ForEach",
-				"dependsOn": [
-					{
-						"activity": "Filter On New Files",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
