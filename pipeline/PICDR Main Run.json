@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Datastore",
+						"referenceName": "PICDR Load Datastore Parallel",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
