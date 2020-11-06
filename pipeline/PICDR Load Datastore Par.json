@@ -190,7 +190,17 @@
 						"referenceName": "PICDR Type 1 Par",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_ImportDate": {
+							"value": "@pipeline().parameters.PPL_ImportDate",
+							"type": "Expression"
+						},
+						"PPL_RunID": {
+							"value": "@pipeline().parameters.PPL_RunID",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -210,7 +220,17 @@
 						"referenceName": "PICDR Type 2 Par",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_ImportDate": {
+							"value": "@pipeline().parameters.PPL_ImportDate",
+							"type": "Expression"
+						},
+						"PPL_RunID": {
+							"value": "@pipeline().parameters.PPL_RunID",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -230,7 +250,17 @@
 						"referenceName": "PICDR Type 3 Par",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_ImportDate": {
+							"value": "@pipeline().parameters.PPL_ImportDate",
+							"type": "Expression"
+						},
+						"PPL_RunID": {
+							"value": "@pipeline().parameters.PPL_RunID",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -250,7 +280,17 @@
 						"referenceName": "PICDR Type 4 Par",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_ImportDate": {
+							"value": "@pipeline().parameters.PPL_ImportDate",
+							"type": "Expression"
+						},
+						"PPL_RunID": {
+							"value": "@pipeline().parameters.PPL_RunID",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -270,7 +310,17 @@
 						"referenceName": "PICDR Type 5 Par",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_ImportDate": {
+							"value": "@pipeline().parameters.PPL_ImportDate",
+							"type": "Expression"
+						},
+						"PPL_RunID": {
+							"value": "@pipeline().parameters.PPL_RunID",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -290,7 +340,17 @@
 						"referenceName": "PICDR Type 6 Par",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_ImportDate": {
+							"value": "@pipeline().parameters.PPL_ImportDate",
+							"type": "Expression"
+						},
+						"PPL_RunID": {
+							"value": "@pipeline().parameters.PPL_RunID",
+							"type": "Expression"
+						}
+					}
 				}
 			},
 			{
@@ -310,7 +370,17 @@
 						"referenceName": "PICDR Type 7 Par",
 						"type": "PipelineReference"
 					},
-					"waitOnCompletion": true
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_ImportDate": {
+							"value": "@pipeline().parameters.PPL_ImportDate",
+							"type": "Expression"
+						},
+						"PPL_RunID": {
+							"value": "@pipeline().parameters.PPL_RunID",
+							"type": "Expression"
+						}
+					}
 				}
 			}
 		],
