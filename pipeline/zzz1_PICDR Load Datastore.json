@@ -1,5 +1,5 @@
 {
-	"name": "PICDR Load Datastore_latest",
+	"name": "zzz1_PICDR Load Datastore",
 	"properties": {
 		"description": "All type sequential",
 		"activities": [
