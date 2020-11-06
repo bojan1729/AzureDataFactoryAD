@@ -1492,7 +1492,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileType = 1 AND FileRefID NOT IN (SELECT FileRefID FROM [staging].[FileLog])",
+							"value": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileType = 2 AND FileRefID NOT IN (SELECT FileRefID FROM [staging].[FileLog])",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
