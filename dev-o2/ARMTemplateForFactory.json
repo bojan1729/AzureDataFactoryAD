@@ -6475,6 +6475,60 @@
 								}
 							}
 						]
+					},
+					{
+						"name": "Check Seq No - Branch Succ",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "File Iteration",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[staging].[usp_CheckSeqNo]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Check Seq No - Branch Fail",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "File Iteration",
+								"dependencyConditions": [
+									"Failed"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[staging].[usp_CheckSeqNo]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
 					}
 				],
 				"parameters": {
@@ -13252,39 +13306,6 @@
 							"referenceName": "LN_SQL_DevDatahub",
 							"type": "LinkedServiceReference"
 						}
-					},
-					{
-						"name": "Check Seq No",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "Update ETL Log Entry Success",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							},
-							{
-								"activity": "Update ETL Log Entry Failure",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[staging].[usp_CheckSeqNo]"
-						},
-						"linkedServiceName": {
-							"referenceName": "LN_SQL_DevDatahub",
-							"type": "LinkedServiceReference"
-						}
 					}
 				],
 				"parameters": {
@@ -13305,7 +13326,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PICDR Main Run par')]",
+			"name": "[concat(parameters('factoryName'), '/PICDR Main Run Parallel')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -13507,6 +13528,39 @@
 									"type": "Int32"
 								}
 							}
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Check Seq No",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Update ETL Log Entry Success",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "Update ETL Log Entry Failure",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[staging].[usp_CheckSeqNo]"
 						},
 						"linkedServiceName": {
 							"referenceName": "LN_SQL_DevDatahub",
