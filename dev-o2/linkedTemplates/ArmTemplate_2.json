@@ -14520,7 +14520,7 @@
 									"ComponentName": {
 										"type": "String",
 										"value": {
-											"value": "PICDR Load Datastore",
+											"value": "PICDR Load Datastore Parallel",
 											"type": "Expression"
 										}
 									},
