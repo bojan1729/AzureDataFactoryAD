@@ -73,7 +73,39 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/zzzwait')]",
+			"name": "[concat(parameters('factoryName'), '/zzzwait1')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Wait1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					},
+					{
+						"name": "Wait1_copy1",
+						"type": "Wait",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"waitTimeInSeconds": 1
+						}
+					}
+				],
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/zzzwait2')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -373,87 +405,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_dim_products')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_KPI/Destinations"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "ContractID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ContractProductID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "AddedDate",
-						"type": "datetime2",
-						"scale": 3
-					},
-					{
-						"name": "ProductID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "ProductName",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ProductType",
-						"type": "nvarchar"
-					},
-					{
-						"name": "ProductGroup",
-						"type": "nvarchar"
-					}
-				],
-				"typeProperties": {
-					"schema": "KPI",
-					"table": "stg_dim_product"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_fact_master')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				},
-				"folder": {
-					"name": "Dev_KPI/Destinations"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [],
-				"typeProperties": {
-					"schema": "KPI",
-					"table": "stg_fact_master"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/DS_BLOB_CsvSink')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -692,6 +643,41 @@
 					}
 				},
 				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DS_BLOB_PICDR_ZipSink')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_BLOB_addufrain1",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"PDS_FileName": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Dev_PICDR"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "AzureBlobStorageLocation",
+						"fileName": {
+							"value": "@concat(dataset().PDS_FileName, '.ZIP')",
+							"type": "Expression"
+						},
+						"folderPath": "filezip",
+						"container": "picdr"
+					}
+				}
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/LN_BLOB_addufrain1')]"

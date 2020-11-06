@@ -13,21 +13,79 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/LiveOnPremSQLGeneric')]",
+			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_dim_products')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "LN_ONPREM_Evolution",
+					"referenceName": "LN_SQL_DevDatahub",
 					"type": "LinkedServiceReference"
 				},
 				"folder": {
-					"name": "Dev_KPI/Sources"
+					"name": "Dev_KPI/Destinations"
 				},
 				"annotations": [],
-				"type": "SqlServerTable",
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ContractID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ContractProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "AddedDate",
+						"type": "datetime2",
+						"scale": 3
+					},
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductType",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductGroup",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "KPI",
+					"table": "stg_dim_product"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dest_azure_dev_stg_fact_master')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				},
+				"folder": {
+					"name": "Dev_KPI/Destinations"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
 				"schema": [],
-				"typeProperties": {}
+				"typeProperties": {
+					"schema": "KPI",
+					"table": "stg_fact_master"
+				}
 			},
 			"dependsOn": []
 		},
@@ -12870,7 +12928,8 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/LiveOnPremSQLGeneric')]"
+				"[concat(variables('factoryId'), '/datasets/dest_azure_dev_stg_fact_master')]",
+				"[concat(variables('factoryId'), '/datasets/dest_azure_dev_stg_dim_products')]"
 			]
 		},
 		{
