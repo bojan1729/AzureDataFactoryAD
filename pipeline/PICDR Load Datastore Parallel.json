@@ -283,11 +283,11 @@
 					"isSequential": true,
 					"activities": [
 						{
-							"name": "Zip to Csv",
+							"name": "Zip to Csv1",
 							"type": "Copy",
 							"dependsOn": [
 								{
-									"activity": "Get Zip File",
+									"activity": "Get Zip File1",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -363,11 +363,11 @@
 							]
 						},
 						{
-							"name": "Clean NO - Clean YES",
+							"name": "Clean NO - Clean YES1",
 							"type": "IfCondition",
 							"dependsOn": [
 								{
-									"activity": "Zip to Csv",
+									"activity": "Zip to Csv1",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -1035,11 +1035,11 @@
 							}
 						},
 						{
-							"name": "NULLRow  RecordID RecordTime",
+							"name": "NULLRow  RecordID RecordTime1",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Clean NO - Clean YES",
+									"activity": "Clean NO - Clean YES1",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -1092,11 +1092,11 @@
 							}
 						},
 						{
-							"name": "Delete CSV",
+							"name": "Delete CSV1",
 							"type": "Delete",
 							"dependsOn": [
 								{
-									"activity": "NULLRow  RecordID RecordTime",
+									"activity": "NULLRow  RecordID RecordTime1",
 									"dependencyConditions": [
 										"Succeeded"
 									]
@@ -1129,7 +1129,7 @@
 							}
 						},
 						{
-							"name": "Get Zip File",
+							"name": "Get Zip File1",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -1185,11 +1185,11 @@
 							]
 						},
 						{
-							"name": "Insert File Log - Get Zip Fail",
+							"name": "Insert File Log - Get Zip Fail1",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Get Zip File",
+									"activity": "Get Zip File1",
 									"dependencyConditions": [
 										"Failed"
 									]
@@ -1215,7 +1215,7 @@
 									},
 									"ErrorMessage": {
 										"value": {
-											"value": "@{activity('Get Zip File').output.errors[0].Message}",
+											"value": "@{activity('Get Zip File1').output.errors[0].Message}",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -1284,11 +1284,11 @@
 							}
 						},
 						{
-							"name": "Insert File Log - Zip to Csv Fail",
+							"name": "Insert File Log - Zip to Csv Fail1",
 							"type": "SqlServerStoredProcedure",
 							"dependsOn": [
 								{
-									"activity": "Zip to Csv",
+									"activity": "Zip to Csv1",
 									"dependencyConditions": [
 										"Failed"
 									]
@@ -1314,7 +1314,7 @@
 									},
 									"ErrorMessage": {
 										"value": {
-											"value": "@{activity('Zip to Csv').output.errors[0].Message}",
+											"value": "@{activity('Zip to Csv1').output.errors[0].Message}",
 											"type": "Expression"
 										},
 										"type": "String"
@@ -1387,7 +1387,7 @@
 							"type": "Lookup",
 							"dependsOn": [
 								{
-									"activity": "Delete CSV",
+									"activity": "Delete CSV1",
 									"dependencyConditions": [
 										"Succeeded"
 									]
