@@ -1,9 +1,9 @@
 {
-	"name": "PICDR Main Run",
+	"name": "PICDR Main Run Seq",
 	"properties": {
 		"activities": [
 			{
-				"name": "PICDR Load Datastore",
+				"name": "PICDR Load Datastore Seq",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Datastore",
+						"referenceName": "PICDR Load Datastore Seq",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -52,7 +52,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Datastore",
+									"value": "PICDR Load Datastore Seq",
 									"type": "Expression"
 								}
 							},
@@ -104,7 +104,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore",
+						"activity": "PICDR Load Datastore Seq",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -155,7 +155,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore",
+						"activity": "PICDR Load Datastore Seq",
 						"dependencyConditions": [
 							"Failed"
 						]
