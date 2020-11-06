@@ -277,7 +277,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Filter On New Files').output.value",
+						"value": "@activity('Filter On New Files Type 1').output.value",
 						"type": "Expression"
 					},
 					"isSequential": true,
