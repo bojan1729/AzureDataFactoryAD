@@ -1,5 +1,5 @@
 {
-	"name": "PICDR Load Datastore Parallel",
+	"name": "PICDR Load Datastore Par",
 	"properties": {
 		"description": "All type sequential",
 		"activities": [
