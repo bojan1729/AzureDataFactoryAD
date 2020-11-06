@@ -1,9 +1,9 @@
 {
-	"name": "PICDR Main Run Man",
+	"name": "PICDR Main Run Seq Man",
 	"properties": {
 		"activities": [
 			{
-				"name": "PICDR Load Datastore Man",
+				"name": "PICDR Load Datastore Seq Man",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Datastore Man",
+						"referenceName": "PICDR Load Datastore Seq Man",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -52,7 +52,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Datastore Man",
+									"value": "PICDR Load Datastore Seq Man",
 									"type": "Expression"
 								}
 							},
@@ -104,7 +104,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore Man",
+						"activity": "PICDR Load Datastore Seq Man",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -155,7 +155,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore Man",
+						"activity": "PICDR Load Datastore Seq Man",
 						"dependencyConditions": [
 							"Failed"
 						]
