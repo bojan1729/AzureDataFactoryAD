@@ -729,11 +729,11 @@
 								],
 								"ifTrueActivities": [
 									{
-										"name": "Load Stage - Uncleaned",
+										"name": "Load Stage - Uncleaned1",
 										"type": "Copy",
 										"dependsOn": [
 											{
-												"activity": "Truncate Uncleaned",
+												"activity": "Truncate Uncleaned1",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -801,11 +801,11 @@
 										]
 									},
 									{
-										"name": "Insert File Log - Uncleaned Succ",
+										"name": "Insert File Log - Uncleaned Succ1",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [
 											{
-												"activity": "Load Stage - Uncleaned",
+												"activity": "Load Stage - Uncleaned1",
 												"dependencyConditions": [
 													"Succeeded"
 												]
@@ -870,7 +870,7 @@
 												},
 												"InsertRows": {
 													"value": {
-														"value": "@if(equals(item().FileType,7), activity('Load Stage - Uncleaned').output.rowsCopied, sub(activity('Load Stage - Uncleaned').output.rowsCopied, 1))",
+														"value": "@if(equals(item().FileType,7), activity('Load Stage - Uncleaned1').output.rowsCopied, sub(activity('Load Stage - Uncleaned1').output.rowsCopied, 1))",
 														"type": "Expression"
 													},
 													"type": "Int32"
@@ -897,7 +897,7 @@
 										}
 									},
 									{
-										"name": "Truncate Uncleaned",
+										"name": "Truncate Uncleaned1",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [],
 										"policy": {
@@ -933,11 +933,11 @@
 										}
 									},
 									{
-										"name": "Insert File Log - Uncleaned Fail",
+										"name": "Insert File Log - Uncleaned Fail1",
 										"type": "SqlServerStoredProcedure",
 										"dependsOn": [
 											{
-												"activity": "Load Stage - Uncleaned",
+												"activity": "Load Stage - Uncleaned1",
 												"dependencyConditions": [
 													"Failed"
 												]
@@ -963,7 +963,7 @@
 												},
 												"ErrorMessage": {
 													"value": {
-														"value": "@{activity('Load Stage - Uncleaned').output.errors[0].Message}",
+														"value": "@{activity('Load Stage - Uncleaned1').output.errors[0].Message}",
 														"type": "Expression"
 													},
 													"type": "String"
@@ -1005,7 +1005,7 @@
 												},
 												"InsertRows": {
 													"value": {
-														"value": "@activity('Load Stage - Uncleaned').output.rowsCopied",
+														"value": "@activity('Load Stage - Uncleaned1').output.rowsCopied",
 														"type": "Expression"
 													},
 													"type": "Int32"
