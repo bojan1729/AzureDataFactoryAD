@@ -2493,6 +2493,7 @@
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "All type sequential",
 				"activities": [
 					{
 						"name": "File Load Definition",
@@ -9031,6 +9032,7 @@
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
+				"description": "All type sequential",
 				"activities": [
 					{
 						"name": "File Load Definition",
