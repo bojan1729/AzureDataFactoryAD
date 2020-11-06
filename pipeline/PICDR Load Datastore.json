@@ -1,6 +1,7 @@
 {
 	"name": "PICDR Load Datastore",
 	"properties": {
+		"description": "All type sequential",
 		"activities": [
 			{
 				"name": "File Load Definition",
