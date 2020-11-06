@@ -13,13 +13,13 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('factoryName'), '/PICDR Main Run Man')]",
+			"name": "[concat(parameters('factoryName'), '/Run O2 ETL Datahub')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"activities": [
 					{
-						"name": "PICDR Load Datastore Man",
+						"name": "Load O2 Files To Stage",
 						"type": "ExecutePipeline",
 						"dependsOn": [
 							{
@@ -32,7 +32,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "PICDR Load Datastore Man",
+								"referenceName": "Load O2 Files To Stage",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -68,7 +68,7 @@
 									"ComponentName": {
 										"type": "String",
 										"value": {
-											"value": "PICDR Load Datastore Man",
+											"value": "Load O2 Files To Stage",
 											"type": "Expression"
 										}
 									},
@@ -121,7 +121,7 @@
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "PICDR Load Datastore Man",
+								"activity": "Load O2 Files To Stage",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -172,7 +172,7 @@
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "PICDR Load Datastore Man",
+								"activity": "Load O2 Files To Stage",
 								"dependencyConditions": [
 									"Failed"
 								]
@@ -202,7 +202,7 @@
 								},
 								"ErrorMessage": {
 									"value": {
-										"value": "ERR Run - see detailed log",
+										"value": "ERR Run - see FileLog",
 										"type": "Expression"
 									},
 									"type": "String"
