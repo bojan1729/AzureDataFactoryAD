@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "PICDR Load Datastore Parallel",
+				"name": "PICDR Load Datastore",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Datastore Parallel",
+						"referenceName": "PICDR Load Datastore",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -52,7 +52,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Datastore Parallel",
+									"value": "PICDR Load Datastore",
 									"type": "Expression"
 								}
 							},
@@ -104,7 +104,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore Parallel",
+						"activity": "PICDR Load Datastore",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -155,7 +155,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore Parallel",
+						"activity": "PICDR Load Datastore",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -198,6 +198,39 @@
 							"type": "Int32"
 						}
 					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Check Seq No",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Update ETL Log Entry Success",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "Update ETL Log Entry Failure",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[staging].[usp_CheckSeqNo]"
 				},
 				"linkedServiceName": {
 					"referenceName": "LN_SQL_DevDatahub",
