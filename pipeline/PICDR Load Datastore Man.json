@@ -140,7 +140,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderQuery": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileRefID NOT IN (SELECT FileRefID FROM [staging].[FileLog])",
+						"sqlReaderQuery": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileRefID NOT IN (SELECT FileRefID FROM [staging].[FileLog]) AND FileType <> 7",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
