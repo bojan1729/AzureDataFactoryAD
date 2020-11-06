@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Datastore",
+						"referenceName": "PICDR Load Datastore Man",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -52,7 +52,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Datastore",
+									"value": "PICDR Load Datastore Man",
 									"type": "Expression"
 								}
 							},
