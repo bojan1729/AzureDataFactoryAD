@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "PICDR Load Datastore Parallel",
+				"name": "PICDR Load Datastore Man",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -104,7 +104,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore Parallel",
+						"activity": "PICDR Load Datastore Man",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -155,7 +155,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Datastore Parallel",
+						"activity": "PICDR Load Datastore Man",
 						"dependencyConditions": [
 							"Failed"
 						]
