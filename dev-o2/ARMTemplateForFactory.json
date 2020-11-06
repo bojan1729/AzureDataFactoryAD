@@ -19252,7 +19252,7 @@
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
-								"referenceName": "PICDR Load Datastore",
+								"referenceName": "PICDR Load Datastore Man",
 								"type": "PipelineReference"
 							},
 							"waitOnCompletion": true,
@@ -19288,7 +19288,7 @@
 									"ComponentName": {
 										"type": "String",
 										"value": {
-											"value": "PICDR Load Datastore",
+											"value": "PICDR Load Datastore Man",
 											"type": "Expression"
 										}
 									},
@@ -19454,7 +19454,7 @@
 				"lastPublishTime": "2020-10-19T06:29:30Z"
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/PICDR Load Datastore')]",
+				"[concat(variables('factoryId'), '/pipelines/PICDR Load Datastore Man')]",
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_Generic')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
 			]
