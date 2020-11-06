@@ -159,7 +159,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "File Iteration",
+						"activity": "File Iteration Type 1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -186,7 +186,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "File Iteration",
+						"activity": "File Iteration Type 1",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -264,7 +264,7 @@
 				]
 			},
 			{
-				"name": "File Iteration",
+				"name": "File Iteration Type 1",
 				"type": "ForEach",
 				"dependsOn": [
 					{
