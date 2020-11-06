@@ -1,5 +1,5 @@
 {
-	"name": "PICDR Load Datastore",
+	"name": "PICDR Load Datastore Seq",
 	"properties": {
 		"description": "All type sequential",
 		"activities": [
