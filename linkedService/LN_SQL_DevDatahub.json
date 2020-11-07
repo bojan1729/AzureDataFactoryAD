@@ -16,7 +16,7 @@
 			}
 		},
 		"connectVia": {
-			"referenceName": "UKSouthRuntime",
+			"referenceName": "UKSouthHighPerformance",
 			"type": "IntegrationRuntimeReference"
 		}
 	}
