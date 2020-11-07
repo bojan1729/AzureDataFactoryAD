@@ -32520,12 +32520,12 @@
 					"connectionString": "[parameters('LN_BLOB_addufrain1_connectionString')]"
 				},
 				"connectVia": {
-					"referenceName": "UKSouthHighPerformance",
+					"referenceName": "UKSouthRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthHighPerformance')]"
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]"
 			]
 		},
 		{
@@ -32555,12 +32555,12 @@
 					}
 				},
 				"connectVia": {
-					"referenceName": "UKSouthHighPerformance",
+					"referenceName": "UKSouthRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthHighPerformance')]",
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
 			]
 		},
@@ -32718,12 +32718,12 @@
 					}
 				},
 				"connectVia": {
-					"referenceName": "UKSouthHighPerformance",
+					"referenceName": "UKSouthRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthHighPerformance')]",
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
 			]
 		},
@@ -32746,12 +32746,12 @@
 					}
 				},
 				"connectVia": {
-					"referenceName": "UKSouthHighPerformance",
+					"referenceName": "UKSouthRuntime",
 					"type": "IntegrationRuntimeReference"
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthHighPerformance')]",
+				"[concat(variables('factoryId'), '/integrationRuntimes/UKSouthRuntime')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_KV_DufrainVault')]"
 			]
 		},
