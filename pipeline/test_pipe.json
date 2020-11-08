@@ -92,7 +92,7 @@
 								},
 								"sink": {
 									"name": "VoiceTarrif",
-									"type": "Boolean"
+									"type": "Int32"
 								}
 							},
 							{
@@ -153,6 +153,146 @@
 								"sink": {
 									"name": "departmentName",
 									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "RevsharePCT",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "RevsharePCT",
+									"type": "Decimal"
+								}
+							},
+							{
+								"source": {
+									"name": "TariffGroup",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TariffGroup",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "isAdvanceable",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "isAdvanceable",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "CostCenterCode",
+									"type": "String"
+								},
+								"sink": {
+									"name": "CostCenterCode",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "SalesTeam",
+									"type": "String"
+								},
+								"sink": {
+									"name": "SalesTeam",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TariffType",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TariffType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "TariffCategory",
+									"type": "String"
+								},
+								"sink": {
+									"name": "TariffCategory",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "BusinessUnit",
+									"type": "String"
+								},
+								"sink": {
+									"name": "BusinessUnit",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductID",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "ProductID",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "ProductTerm",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "ProductTerm",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "contractTerm",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "contractTerm",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "DealerName",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DealerName",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "FundingType",
+									"type": "String"
+								},
+								"sink": {
+									"name": "FundingType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "Advance",
+									"type": "Decimal"
+								},
+								"sink": {
+									"name": "Advance",
+									"type": "Double"
 								}
 							},
 							{
@@ -167,152 +307,82 @@
 							},
 							{
 								"source": {
-									"name": "RevsharePCT",
+									"name": "VolumeBonus",
 									"type": "Decimal"
 								},
 								"sink": {
-									"name": "RevsharePCT",
-									"type": "Int32"
+									"name": "VolumeBonus",
+									"type": "Double"
 								}
 							},
 							{
 								"source": {
-									"name": "TariffGroup",
-									"type": "String"
+									"name": "Churn Bonus",
+									"type": "Decimal"
 								},
 								"sink": {
-									"name": "TariffGroup",
-									"type": "String"
+									"name": "Churn Bonus",
+									"type": "Double"
 								}
 							},
 							{
 								"source": {
-									"name": "isAdvanceable",
-									"type": "Int32"
+									"name": "Digital Bonus",
+									"type": "Decimal"
 								},
 								"sink": {
-									"name": "isAdvanceable",
-									"type": "Boolean"
+									"name": "Digital Bonus",
+									"type": "Double"
 								}
 							},
 							{
 								"source": {
-									"name": "CostCenterCode",
-									"type": "String"
+									"name": "CSI Bonus",
+									"type": "Decimal"
 								},
 								"sink": {
-									"name": "CostCenterCode",
-									"type": "String"
+									"name": "CSI Bonus",
+									"type": "Double"
 								}
 							},
 							{
 								"source": {
-									"name": "SalesTeam",
-									"type": "String"
+									"name": "Resign Bonus",
+									"type": "Decimal"
 								},
 								"sink": {
-									"name": "SalesTeam",
-									"type": "String"
+									"name": "Resign Bonus",
+									"type": "Double"
 								}
 							},
 							{
 								"source": {
-									"name": "TariffType",
-									"type": "String"
+									"name": "Advance Recovery",
+									"type": "Decimal"
 								},
 								"sink": {
-									"name": "TariffType",
-									"type": "String"
+									"name": "Advance Recovery",
+									"type": "Double"
 								}
 							},
 							{
 								"source": {
-									"name": "TariffCategory",
-									"type": "String"
+									"name": "Finance Deposit",
+									"type": "Decimal"
 								},
 								"sink": {
-									"name": "TariffCategory",
-									"type": "String"
+									"name": "Finance Deposit",
+									"type": "Double"
 								}
 							},
 							{
 								"source": {
-									"name": "BusinessUnit",
-									"type": "String"
-								},
-								"sink": {
-									"name": "BusinessUnit",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "ProductID",
+									"name": "RecurrenceCount",
 									"type": "Int32"
 								},
 								"sink": {
-									"name": "ProductID",
+									"name": "RecurrenceCount",
 									"type": "Int32"
-								}
-							},
-							{
-								"source": {
-									"name": "ProductTerm",
-									"type": "Int32"
-								},
-								"sink": {
-									"name": "ProductTerm",
-									"type": "Int32"
-								}
-							},
-							{
-								"source": {
-									"name": "ProductName",
-									"type": "String"
-								},
-								"sink": {
-									"name": "ProductName",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "ProductGroup",
-									"type": "String"
-								},
-								"sink": {
-									"name": "ProductGroup",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "ProductType",
-									"type": "String"
-								},
-								"sink": {
-									"name": "ProductType",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "PhoneName",
-									"type": "String"
-								},
-								"sink": {
-									"name": "PhoneName",
-									"type": "String"
-								}
-							},
-							{
-								"source": {
-									"name": "PhoneAddedDate",
-									"type": "DateTime"
-								},
-								"sink": {
-									"name": "PhoneAddedDate",
-									"type": "DateTime"
 								}
 							}
 						]
