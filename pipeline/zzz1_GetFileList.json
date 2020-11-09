@@ -1,5 +1,5 @@
 {
-	"name": "zzz1_PICDR Load Datastore",
+	"name": "zzz1_GetFileList",
 	"properties": {
 		"description": "All type sequential",
 		"activities": [
