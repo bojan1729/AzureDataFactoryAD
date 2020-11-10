@@ -29186,7 +29186,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": "\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\twhere cp.RemovedDate is null\n\tand cp.addedDate >= dateadd(month,-2,getdate()) ",
+								"sqlReaderQuery": "\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\twhere cp.RemovedDate is null\n\tand cp.addedDate >= dateadd(month,-24,getdate()) ",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
