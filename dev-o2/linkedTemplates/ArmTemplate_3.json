@@ -8615,46 +8615,6 @@
 								"parameters": {}
 							}
 						]
-					},
-					{
-						"name": "set fact rows",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Copy to fact staging table",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "Fact_rows",
-							"value": {
-								"value": "@activity('Copy to fact staging table').rowsCopied",
-								"type": "Expression"
-							}
-						}
-					},
-					{
-						"name": "set product rows",
-						"type": "SetVariable",
-						"dependsOn": [
-							{
-								"activity": "Copy to dim_product staging table",
-								"dependencyConditions": [
-									"Completed"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"variableName": "product_rows",
-							"value": {
-								"value": "@activity('Copy to dim_product staging table').output).rowsCopied",
-								"type": "Expression"
-							}
-						}
 					}
 				],
 				"variables": {
