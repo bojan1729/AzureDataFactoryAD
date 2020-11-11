@@ -1,5 +1,5 @@
 {
-	"name": "test_pipe",
+	"name": "Load KPI to Datastore",
 	"properties": {
 		"activities": [
 			{

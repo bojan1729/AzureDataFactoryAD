@@ -6,7 +6,7 @@
 		"pipelines": [
 			{
 				"pipelineReference": {
-					"referenceName": "test_pipe",
+					"referenceName": "Load KPI to Datastore",
 					"type": "PipelineReference"
 				}
 			}
