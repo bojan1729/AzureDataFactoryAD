@@ -8049,7 +8049,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/test_pipe')]",
+			"name": "[concat(parameters('factoryName'), '/Load KPI to Datastore')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -10639,7 +10639,7 @@
 				"pipelines": [
 					{
 						"pipelineReference": {
-							"referenceName": "test_pipe",
+							"referenceName": "Load KPI to Datastore",
 							"type": "PipelineReference"
 						},
 						"parameters": {}
@@ -10664,7 +10664,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/test_pipe')]"
+				"[concat(variables('factoryId'), '/pipelines/Load KPI to Datastore')]"
 			]
 		},
 		{
