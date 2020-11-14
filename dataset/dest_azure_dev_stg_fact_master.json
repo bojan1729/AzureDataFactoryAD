@@ -13,7 +13,7 @@
 		"schema": [],
 		"typeProperties": {
 			"schema": "KPI",
-			"table": "stg_fact_master"
+			"table": "stg_F_master"
 		}
 	}
 }
