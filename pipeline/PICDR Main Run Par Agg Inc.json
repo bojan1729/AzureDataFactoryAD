@@ -1,5 +1,5 @@
 {
-	"name": "PICDR Main Run Par Agg",
+	"name": "PICDR Main Run Par Agg Inc",
 	"properties": {
 		"activities": [
 			{
@@ -339,7 +339,7 @@
 				}
 			},
 			{
-				"name": "PICDR Load Agg",
+				"name": "PICDR Load Agg Inc",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -352,7 +352,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Agg",
+						"referenceName": "PICDR Load Agg Inc",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -369,7 +369,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Agg",
+						"activity": "PICDR Load Agg Inc",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -420,7 +420,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Agg",
+						"activity": "PICDR Load Agg Inc",
 						"dependencyConditions": [
 							"Failed"
 						]
