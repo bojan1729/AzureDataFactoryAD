@@ -38,7 +38,7 @@
 				}
 			},
 			{
-				"name": "Datastore Log - 7",
+				"name": "Datastore Log - CDR Agg Month Inc",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
