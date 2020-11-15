@@ -259,7 +259,7 @@
 				}
 			},
 			{
-				"name": "Create ETL Log Entry Agg",
+				"name": "Create ETL Log Entry Agg 1",
 				"type": "Lookup",
 				"dependsOn": [
 					{
@@ -333,11 +333,11 @@
 				}
 			},
 			{
-				"name": "PICDR Load Agg Inc",
+				"name": "PICDR Load Agg Inc 1",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "Create ETL Log Entry Agg",
+						"activity": "Create ETL Log Entry Agg 1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -359,11 +359,11 @@
 				}
 			},
 			{
-				"name": "Update ETL Log Entry Agg Success",
+				"name": "Update ETL Log Entry Agg Success 1",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Agg Inc",
+						"activity": "PICDR Load Agg Inc 1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -397,7 +397,7 @@
 						},
 						"EtlLogId": {
 							"value": {
-								"value": "@activity('Create ETL Log Entry Agg').output.firstRow.EtlLogId",
+								"value": "@activity('Create ETL Log Entry Agg 1').output.firstRow.EtlLogId",
 								"type": "Expression"
 							},
 							"type": "Int32"
@@ -410,11 +410,11 @@
 				}
 			},
 			{
-				"name": "Update ETL Log Entry Agg Failure",
+				"name": "Update ETL Log Entry Agg Failure 1",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Agg Inc",
+						"activity": "PICDR Load Agg Inc 1",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -451,7 +451,7 @@
 						},
 						"EtlLogId": {
 							"value": {
-								"value": "@activity('Create ETL Log Entry Agg').output.firstRow.EtlLogId",
+								"value": "@activity('Create ETL Log Entry Agg 1').output.firstRow.EtlLogId",
 								"type": "Expression"
 							},
 							"type": "Int32"
