@@ -1,5 +1,5 @@
 {
-	"name": "PICDR Agg",
+	"name": "PICDR Load Agg",
 	"properties": {
 		"description": "All type sequential",
 		"activities": [
