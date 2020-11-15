@@ -291,7 +291,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Datastore Par",
+									"value": "PICDR Load Agg",
 									"type": "Expression"
 								}
 							},
@@ -335,6 +335,32 @@
 					"dataset": {
 						"referenceName": "DS_SQL_Generic",
 						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "PICDR Load Agg",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Create ETL Log Entry Agg",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PICDR Load Agg",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_RunID": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
 					}
 				}
 			}
