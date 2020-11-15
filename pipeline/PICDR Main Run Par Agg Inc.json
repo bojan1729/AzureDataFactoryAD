@@ -291,7 +291,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Agg",
+									"value": "PICDR Load Agg Inc",
 									"type": "Expression"
 								}
 							},
