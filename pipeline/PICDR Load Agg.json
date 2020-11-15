@@ -4,7 +4,7 @@
 		"description": "All type sequential",
 		"activities": [
 			{
-				"name": "Load - CDR",
+				"name": "Load - CDR Agg Month Inc",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -18,7 +18,16 @@
 				"typeProperties": {
 					"source": {
 						"type": "AzureSqlSource",
-						"sqlReaderStoredProcedureName": "[cdr].[usp_LoadCDR]",
+						"sqlReaderStoredProcedureName": "[cdr].[usp_LoadCDRAggMonthInc]",
+						"storedProcedureParameters": {
+							"PipelineRunID": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().parameters.PPL_RunID",
+									"type": "Expression"
+								}
+							}
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -33,7 +42,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "Load - CDR",
+						"activity": "Load - CDR Agg Month Inc",
 						"dependencyConditions": [
 							"Succeeded"
 						]
