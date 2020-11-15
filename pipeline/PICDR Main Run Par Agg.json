@@ -1,0 +1,274 @@
+{
+	"name": "PICDR Main Run Par Agg",
+	"properties": {
+		"activities": [
+			{
+				"name": "PICDR Load Datastore Par",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Create ETL Log Entry",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "PICDR Load Datastore Par",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"PPL_ImportDate": {
+							"value": "@pipeline().parameters.PPL_ImportDateMaster",
+							"type": "Expression"
+						},
+						"PPL_RunID": {
+							"value": "@pipeline().RunId",
+							"type": "Expression"
+						}
+					}
+				}
+			},
+			{
+				"name": "Create ETL Log Entry",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderStoredProcedureName": "[logging].[usp_InsertEtlLog]",
+						"storedProcedureParameters": {
+							"ComponentName": {
+								"type": "String",
+								"value": {
+									"value": "PICDR Load Datastore Par",
+									"type": "Expression"
+								}
+							},
+							"DurationSeconds": {
+								"type": "Int32",
+								"value": null
+							},
+							"EndTime": {
+								"type": "DateTime",
+								"value": null
+							},
+							"ErrorMessage": {
+								"type": "String",
+								"value": null
+							},
+							"PipelineName": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().Pipeline",
+									"type": "Expression"
+								}
+							},
+							"PipelineRunID": {
+								"type": "String",
+								"value": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							},
+							"StartTime": {
+								"type": "DateTime",
+								"value": {
+									"value": "@utcnow()",
+									"type": "Expression"
+								}
+							}
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_Generic",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "Update ETL Log Entry Success",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Check Seq No Success",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[logging].[usp_UpdateEtlLog]",
+					"storedProcedureParameters": {
+						"DurationSeconds": {
+							"value": null,
+							"type": "Int32"
+						},
+						"EndTime": {
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"ErrorMessage": {
+							"value": null,
+							"type": "String"
+						},
+						"EtlLogId": {
+							"value": {
+								"value": "@activity('Create ETL Log Entry').output.firstRow.EtlLogId",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Update ETL Log Entry Failure",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Check Seq No Failure",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[logging].[usp_UpdateEtlLog]",
+					"storedProcedureParameters": {
+						"DurationSeconds": {
+							"value": null,
+							"type": "Int32"
+						},
+						"EndTime": {
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"ErrorMessage": {
+							"value": {
+								"value": "ERR Run - see detailed log",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"EtlLogId": {
+							"value": {
+								"value": "@activity('Create ETL Log Entry').output.firstRow.EtlLogId",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Check Seq No Success",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "PICDR Load Datastore Par",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[staging].[usp_CheckSeqNo]"
+				},
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Check Seq No Failure",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "PICDR Load Datastore Par",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[staging].[usp_CheckSeqNo]"
+				},
+				"linkedServiceName": {
+					"referenceName": "LN_SQL_DevDatahub",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"parameters": {
+			"PPL_ImportDateMaster": {
+				"type": "string"
+			}
+		},
+		"folder": {
+			"name": "Dev_PICDR"
+		},
+		"annotations": [],
+		"lastPublishTime": "2020-10-19T06:29:30Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
