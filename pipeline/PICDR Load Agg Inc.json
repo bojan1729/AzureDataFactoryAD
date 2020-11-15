@@ -132,7 +132,7 @@
 				}
 			},
 			{
-				"name": "Set Agg High Watermark S",
+				"name": "Set Agg High Watermark",
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
@@ -259,42 +259,6 @@
 								"type": "Expression"
 							},
 							"type": "Int32"
-						}
-					}
-				},
-				"linkedServiceName": {
-					"referenceName": "LN_SQL_DevDatahub",
-					"type": "LinkedServiceReference"
-				}
-			},
-			{
-				"name": "Set Agg High Watermark F",
-				"type": "SqlServerStoredProcedure",
-				"dependsOn": [
-					{
-						"activity": "Datastore Log - CDR Agg Month Inc F",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"storedProcedureName": "[cdr].[usp_SetAggHighWatermark]",
-					"storedProcedureParameters": {
-						"PipelineRunID": {
-							"value": {
-								"value": "@pipeline().parameters.PPL_RunID",
-								"type": "Expression"
-							},
-							"type": "String"
 						}
 					}
 				},
