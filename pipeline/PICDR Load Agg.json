@@ -385,9 +385,6 @@
 			}
 		],
 		"parameters": {
-			"PPL_ImportDate": {
-				"type": "string"
-			},
 			"PPL_RunID": {
 				"type": "string"
 			}
