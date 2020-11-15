@@ -61,28 +61,28 @@
 					"storedProcedureParameters": {
 						"Actions": {
 							"value": {
-								"value": "@{activity('Load - CDR').output.firstRow.actions}",
+								"value": "@{activity('Load - CDR Agg Month Inc').output.firstRow.actions}",
 								"type": "Expression"
 							},
 							"type": "Int32"
 						},
 						"ComponentName": {
 							"value": {
-								"value": "@pipeline().Pipeline",
+								"value": "PICDR Agg Month Inc",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"ErrorMessage": {
 							"value": {
-								"value": "@{activity('Load - CDR').output.firstRow.ErrorMessage}",
+								"value": "@{activity('Load - CDR Agg Month Inc').output.firstRow.ErrorMessage}",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
 						"ErrorNumber": {
 							"value": {
-								"value": "@{activity('Load - CDR').output.firstRow.ErrorNumber}",
+								"value": "@{activity('Load - CDR Agg Month Inc').output.firstRow.ErrorNumber}",
 								"type": "Expression"
 							},
 							"type": "Int32"
