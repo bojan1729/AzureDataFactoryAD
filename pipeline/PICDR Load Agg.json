@@ -88,17 +88,11 @@
 							"type": "Int32"
 						},
 						"FileSeqno": {
-							"value": {
-								"value": "@{item().FileSeqNo}",
-								"type": "Expression"
-							},
+							"value": null,
 							"type": "Int32"
 						},
 						"ImportDate": {
-							"value": {
-								"value": "@{item().ImportDate}",
-								"type": "Expression"
-							},
+							"value": null,
 							"type": "DateTime"
 						},
 						"Inserts": {
