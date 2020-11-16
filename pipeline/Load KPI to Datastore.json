@@ -453,7 +453,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": ";with finances as \n(\nSELECT * FROM \n(\n\tselect \n\t\tcc.ContractProductID --changed this\n\t\t,cc.ContractID\n\t\t,case \n\t\t\twhen cc.CostTypeID IN (34,35,36) then  'VolumeBonus'\n\t\t\telse ct.Name end as BonusType\n\t\t,cc.amount\n\tfrom [Evolution].[Crm].[ContractCost] cc\n\tleft join [Evolution].[Financial].[CostType] ct on cc.CostTypeID = ct.CostTypeID\n\twhere cc.ContractProductID is null\n)T\nPIVOT(\n\tSUM(AMOUNT)\n\tFOR BonusType IN (\n\t[Customer Card Payment]\n\t,[Finance Deposit]\n\t,[Buy Out Cost]\n\t) \n)AS PIVOT_TABLE\n)\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\t\t,f.[Customer Card Payment] as CustomerCardPayment\n\t\t,f.[Finance Deposit] as FinanceDeposit\n\t\t,f.[Buy Out Cost] as BuyOutCost\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tleft JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tleft JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\tleft JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\tleft join finances f on f.ContractID = cp.ContractID\n\twhere cp.RemovedDate is null\n\t--and cp.ContractID = 50592784\n\tand cp.addedDate >= '2018-01-01 00:00:00.000'\n",
+						"sqlReaderQuery": ";with finances as \n(\nSELECT * FROM \n(\n\tselect \n\t\tcc.ContractProductID --changed this\n\t\t,cc.ContractID\n\t\t,case \n\t\t\twhen cc.CostTypeID IN (34,35,36) then  'VolumeBonus'\n\t\t\telse ct.Name end as BonusType\n\t\t,cc.amount\n\tfrom [Evolution].[Crm].[ContractCost] cc\n\tleft join [Evolution].[Financial].[CostType] ct on cc.CostTypeID = ct.CostTypeID\n\twhere cc.ContractProductID is null\n)T\nPIVOT(\n\tSUM(AMOUNT)\n\tFOR BonusType IN (\n\t[Customer Card Payment]\n\t,[Finance Deposit]\n\t,[Buy Out Cost]\n\t) \n)AS PIVOT_TABLE\n)\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\t\t,f.[Customer Card Payment] as CustomerCardPayment\n\t\t,f.[Finance Deposit] as FinanceDeposit\n\t\t,f.[Buy Out Cost] as BuyOutCost\n\t\t,ds.Name as DispatchStatus\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tleft JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tleft JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\tleft JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\tleft join finances f on f.ContractID = cp.ContractID\n\tleft join product.DispatchOrderLine dol on dol.ContractProductID = cp.ContractProductID\n\tleft join product.DispatchOrder do on do.DispatchOrderID  =dol.DispatchOrderID\n\tleft join [Product].[DispatchStatus] ds on ds.DispatchStatusID = do.DispatchStatusID\n\twhere cp.RemovedDate is null\n\t--and cp.ContractID = 50592784\n\tand cp.addedDate >= '2018-01-01 00:00:00.000'\n",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -572,6 +572,16 @@
 								"sink": {
 									"name": "BuyOutCost",
 									"type": "Double"
+								}
+							},
+							{
+								"source": {
+									"name": "DispatchStatus",
+									"type": "String"
+								},
+								"sink": {
+									"name": "DispatchStatus",
+									"type": "String"
 								}
 							}
 						]
