@@ -22,7 +22,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"PPL_ImportDate": {
-							"value": "@variables('CurrentDate')",
+							"value": "@activity('Lookup1').output.firstRow.currentdate",
 							"type": "Expression"
 						},
 						"PPL_RunID": {
