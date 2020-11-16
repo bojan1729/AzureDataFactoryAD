@@ -40,7 +40,7 @@
 				"typeProperties": {
 					"variableName": "CurrentDate",
 					"value": {
-						"value": "select convert(varchar, getdate() - 1, 23) as currentdate",
+						"value": "select convert(varchar, getdate(), 23) as currentdate",
 						"type": "Expression"
 					}
 				}
