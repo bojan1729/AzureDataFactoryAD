@@ -22,7 +22,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"PPL_ImportDate": {
-							"value": "@variables('CurrentDate')",
+							"value": "@{variables('CurrentDate')}",
 							"type": "Expression"
 						},
 						"PPL_RunID": {
