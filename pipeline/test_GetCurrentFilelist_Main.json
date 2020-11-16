@@ -22,7 +22,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"PPL_ImportDate": {
-							"value": "@substring(utcnow(), 0, 10)",
+							"value": "@substring(adddays(utcnow(), -1), 0, 10)",
 							"type": "Expression"
 						},
 						"PPL_RunID": {
