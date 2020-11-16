@@ -81,11 +81,6 @@
 				}
 			}
 		],
-		"parameters": {
-			"PPL_ImportDateMaster": {
-				"type": "string"
-			}
-		},
 		"variables": {
 			"CurrentDate": {
 				"type": "String"
