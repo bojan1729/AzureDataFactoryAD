@@ -728,7 +728,7 @@
 						"typeProperties": {
 							"source": {
 								"type": "SqlServerSource",
-								"sqlReaderQuery": ";with finances as \n(\nSELECT * FROM \n(\n\tselect \n\t\tcc.ContractProductID --changed this\n\t\t,cc.ContractID\n\t\t,case \n\t\t\twhen cc.CostTypeID IN (34,35,36) then  'VolumeBonus'\n\t\t\telse ct.Name end as BonusType\n\t\t,cc.amount\n\tfrom [Evolution].[Crm].[ContractCost] cc\n\tleft join [Evolution].[Financial].[CostType] ct on cc.CostTypeID = ct.CostTypeID\n\twhere cc.ContractProductID is null\n)T\nPIVOT(\n\tSUM(AMOUNT)\n\tFOR BonusType IN (\n\t[Customer Card Payment]\n\t,[Finance Deposit]\n\t,[Buy Out Cost]\n\t) \n)AS PIVOT_TABLE\n)\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\t\t,f.[Customer Card Payment] as CustomerCardPayment\n\t\t,f.[Finance Deposit] as FinanceDeposit\n\t\t,f.[Buy Out Cost] as BuyOutCost\n\t\t,ds.Name as DispatchStatus\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tleft JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tleft JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\tleft JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\tleft join finances f on f.ContractID = cp.ContractID\n\tleft join product.DispatchOrderLine dol on dol.ContractProductID = cp.ContractProductID\n\tleft join product.DispatchOrder do on do.DispatchOrderID  =dol.DispatchOrderID\n\tleft join [Product].[DispatchStatus] ds on ds.DispatchStatusID = do.DispatchStatusID\n\twhere cp.RemovedDate is null\n\t--and cp.ContractID = 50592784\n\tand cp.addedDate >= '2018-01-01 00:00:00.000'\n",
+								"sqlReaderQuery": ";with finances as \n(\nSELECT * FROM \n(\n\tselect \n\t\tcc.ContractProductID --changed this\n\t\t,cc.ContractID\n\t\t,case \n\t\t\twhen cc.CostTypeID IN (34,35,36) then  'VolumeBonus'\n\t\t\telse ct.Name end as BonusType\n\t\t,cc.amount\n\tfrom [Evolution].[Crm].[ContractCost] cc\n\tleft join [Evolution].[Financial].[CostType] ct on cc.CostTypeID = ct.CostTypeID\n\twhere cc.ContractProductID is null\n)T\nPIVOT(\n\tSUM(AMOUNT)\n\tFOR BonusType IN (\n\t[Customer Card Payment]\n\t,[Finance Deposit]\n\t,[Buy Out Cost]\n\t) \n)AS PIVOT_TABLE\n)\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\t\t,f.[Customer Card Payment] as CustomerCardPayment\n\t\t,f.[Finance Deposit] as FinanceDeposit\n\t\t,f.[Buy Out Cost] as BuyOutCost\n\t\t,ds.Name as DispatchStatus\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tleft JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tleft JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\tleft JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\tleft join finances f on f.ContractID = cp.ContractID\n\tleft join product.DispatchOrderLine dol on dol.ContractProductID = cp.ContractProductID and dol.DispatchProductID is not null\n\tleft join product.DispatchOrder do on do.DispatchOrderID  =dol.DispatchOrderID\n\tleft join [Product].[DispatchStatus] ds on ds.DispatchStatusID = do.DispatchStatusID\n\twhere cp.RemovedDate is null\n\t--and cp.ContractID = 50437758\n\tand cp.addedDate >= '2018-01-01 00:00:00.000'",
 								"queryTimeout": "02:00:00",
 								"partitionOption": "None"
 							},
@@ -33015,6 +33015,273 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/DS_SQL_Generic')]",
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/test_GetCurrentFilelist')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"description": "All type sequential",
+				"activities": [
+					{
+						"name": "File Load Definition",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Get File List",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "JsonSource",
+								"storeSettings": {
+									"type": "AzureBlobStorageReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "JsonReadSettings"
+								}
+							},
+							"sink": {
+								"type": "AzureSqlSink",
+								"preCopyScript": "TRUNCATE TABLE [staging].[FileLoadDefinition]",
+								"disableMetricsCollection": false
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"path": "$['fileRefID']"
+										},
+										"sink": {
+											"name": "FileRefID",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['fileName']"
+										},
+										"sink": {
+											"name": "FileName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"path": "$['importDate']"
+										},
+										"sink": {
+											"name": "ImportDate",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_BLOB_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_FileList": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_SQL_PICDR_LoadDefinition",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					},
+					{
+						"name": "Get File List",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET"
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobStorageWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "DS_REST_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_ImportDate": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "DS_BLOB_PICDR_FileList",
+								"type": "DatasetReference",
+								"parameters": {
+									"PDS_FileList": {
+										"value": "@pipeline().parameters.PPL_ImportDate",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					}
+				],
+				"parameters": {
+					"PPL_ImportDate": {
+						"type": "string"
+					},
+					"PPL_RunID": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-18T17:03:27Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DS_BLOB_PICDR_FileList')]",
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_PICDR_LoadDefinition')]",
+				"[concat(variables('factoryId'), '/datasets/DS_REST_PICDR_FileList')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/test_GetCurrentFilelist_Main')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "GetCurrentFilelist",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "test_GetCurrentFilelist",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"PPL_ImportDate": {
+									"value": "@variables('CurrentDate')",
+									"type": "Expression"
+								},
+								"PPL_RunID": {
+									"value": "@pipeline().RunId",
+									"type": "Expression"
+								}
+							}
+						}
+					},
+					{
+						"name": "GetCurrentDate",
+						"type": "SetVariable",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"variableName": "CurrentDate",
+							"value": {
+								"value": "select convert(varchar, getdate() - 1, 23)",
+								"type": "Expression"
+							}
+						}
+					},
+					{
+						"name": "Lookup1",
+						"type": "Lookup",
+						"dependsOn": [
+							{
+								"activity": "GetCurrentDate",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "AzureSqlSource",
+								"sqlReaderQuery": {
+									"value": "@variables('CurrentDate')",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "DS_SQL_Generic",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					}
+				],
+				"variables": {
+					"CurrentDate": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Test1"
+				},
+				"annotations": [],
+				"lastPublishTime": "2020-10-19T06:29:30Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/test_GetCurrentFilelist')]",
+				"[concat(variables('factoryId'), '/datasets/DS_SQL_Generic')]"
 			]
 		},
 		{
