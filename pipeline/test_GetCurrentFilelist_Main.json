@@ -5,14 +5,7 @@
 			{
 				"name": "GetCurrentFilelist",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "GetCurrentDate",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -22,7 +15,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"PPL_ImportDate": {
-							"value": "@{variables('CurrentDate')}",
+							"value": "@variables('CurrentDate')",
 							"type": "Expression"
 						},
 						"PPL_RunID": {
@@ -42,6 +35,41 @@
 					"value": {
 						"value": "select convert(varchar, getdate() - 1, 23)",
 						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "GetCurrentDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": {
+							"value": "@variables('CurrentDate')",
+							"type": "Expression"
+						},
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_Generic",
+						"type": "DatasetReference"
 					}
 				}
 			}
