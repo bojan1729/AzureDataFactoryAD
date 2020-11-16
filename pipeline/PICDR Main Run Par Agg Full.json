@@ -333,7 +333,7 @@
 				}
 			},
 			{
-				"name": "PICDR Load Agg Inc 1",
+				"name": "PICDR Load Agg Full 1",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -346,7 +346,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Agg Inc",
+						"referenceName": "PICDR Load Agg Full",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -363,7 +363,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Agg Inc 1",
+						"activity": "PICDR Load Agg Full 1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -414,7 +414,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Agg Inc 1",
+						"activity": "PICDR Load Agg Full 1",
 						"dependencyConditions": [
 							"Failed"
 						]
@@ -538,7 +538,7 @@
 				}
 			},
 			{
-				"name": "PICDR Load Agg Inc 2",
+				"name": "PICDR Load Agg Full 2",
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
@@ -551,7 +551,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
-						"referenceName": "PICDR Load Agg Inc",
+						"referenceName": "PICDR Load Agg Full",
 						"type": "PipelineReference"
 					},
 					"waitOnCompletion": true,
@@ -568,7 +568,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Agg Inc 2",
+						"activity": "PICDR Load Agg Full 2",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -619,7 +619,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "PICDR Load Agg Inc 2",
+						"activity": "PICDR Load Agg Full 2",
 						"dependencyConditions": [
 							"Failed"
 						]
