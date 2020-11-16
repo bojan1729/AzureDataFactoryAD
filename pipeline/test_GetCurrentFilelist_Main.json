@@ -5,7 +5,14 @@
 			{
 				"name": "GetCurrentFilelist",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "GetCurrentDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -15,7 +22,7 @@
 					"waitOnCompletion": true,
 					"parameters": {
 						"PPL_ImportDate": {
-							"value": "@pipeline().parameters.PPL_ImportDateMaster",
+							"value": "@variables('CurrentDate')",
 							"type": "Expression"
 						},
 						"PPL_RunID": {
@@ -24,11 +31,24 @@
 						}
 					}
 				}
+			},
+			{
+				"name": "GetCurrentDate",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "CurrentDate",
+					"value": {
+						"value": "select convert(varchar, getdate(), 23)",
+						"type": "Expression"
+					}
+				}
 			}
 		],
-		"parameters": {
-			"PPL_ImportDateMaster": {
-				"type": "string"
+		"variables": {
+			"CurrentDate": {
+				"type": "String"
 			}
 		},
 		"folder": {
