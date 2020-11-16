@@ -35813,6 +35813,38 @@
 				"[concat(variables('factoryId'), '/linkedServices/LN_SQL_DevDatahub')]",
 				"[concat(variables('factoryId'), '/pipelines/PICDR Load Agg Inc')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/PICDR Main Run Par Agg Inc Sch')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipelines": [
+					{
+						"pipelineReference": {
+							"referenceName": "PICDR Main Run Par Agg Inc Sch",
+							"type": "PipelineReference"
+						},
+						"parameters": {}
+					}
+				],
+				"type": "ScheduleTrigger",
+				"typeProperties": {
+					"recurrence": {
+						"frequency": "Day",
+						"interval": 1,
+						"startTime": "2020-11-16T17:15:00Z",
+						"endTime": "2020-11-16T18:15:00Z",
+						"timeZone": "UTC",
+						"schedule": {}
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/PICDR Main Run Par Agg Inc Sch')]"
+			]
 		}
 	]
 }
