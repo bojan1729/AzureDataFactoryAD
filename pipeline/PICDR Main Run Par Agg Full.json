@@ -285,7 +285,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Agg Inc",
+									"value": "PICDR Load Agg Full",
 									"type": "Expression"
 								}
 							},
@@ -490,7 +490,7 @@
 							"ComponentName": {
 								"type": "String",
 								"value": {
-									"value": "PICDR Load Agg Inc",
+									"value": "PICDR Load Agg Full",
 									"type": "Expression"
 								}
 							},
