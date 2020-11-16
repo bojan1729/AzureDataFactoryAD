@@ -1,0 +1,25 @@
+{
+	"name": "PICDR Main Run Par Agg Inc Sch",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PICDR Main Run Par Agg Inc Sch",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Day",
+				"interval": 1,
+				"startTime": "2020-11-16T17:15:00Z",
+				"endTime": "2020-11-16T18:15:00Z",
+				"timeZone": "UTC"
+			}
+		}
+	}
+}
