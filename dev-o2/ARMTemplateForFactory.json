@@ -33198,7 +33198,14 @@
 					{
 						"name": "GetCurrentFilelist",
 						"type": "ExecutePipeline",
-						"dependsOn": [],
+						"dependsOn": [
+							{
+								"activity": "Lookup1",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
 						"userProperties": [],
 						"typeProperties": {
 							"pipeline": {
@@ -33208,7 +33215,7 @@
 							"waitOnCompletion": true,
 							"parameters": {
 								"PPL_ImportDate": {
-									"value": "@variables('CurrentDate')",
+									"value": "@activity('Lookup1').output.firstRow.currentdate",
 									"type": "Expression"
 								},
 								"PPL_RunID": {
@@ -33226,7 +33233,7 @@
 						"typeProperties": {
 							"variableName": "CurrentDate",
 							"value": {
-								"value": "select convert(varchar, getdate() - 1, 23)",
+								"value": "select convert(varchar, getdate(), 23) as currentdate",
 								"type": "Expression"
 							}
 						}
