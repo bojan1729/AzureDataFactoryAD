@@ -3072,7 +3072,7 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/PICDR Main Run Par Agg Inc Sch')]",
+			"name": "[concat(parameters('factoryName'), '/PICDR run every night at 10 PM')]",
 			"type": "Microsoft.DataFactory/factories/triggers",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -3092,9 +3092,9 @@
 					"recurrence": {
 						"frequency": "Day",
 						"interval": 1,
-						"startTime": "2020-11-16T17:15:00Z",
-						"endTime": "2020-11-16T18:15:00Z",
-						"timeZone": "UTC"
+						"startTime": "2020-11-17T22:01:00Z",
+						"timeZone": "UTC",
+						"schedule": {}
 					}
 				}
 			},
