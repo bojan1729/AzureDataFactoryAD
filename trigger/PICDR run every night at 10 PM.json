@@ -1,5 +1,5 @@
 {
-	"name": "PICDR Main Run Par Agg Inc Sch",
+	"name": "PICDR run every night at 10 PM",
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
@@ -16,8 +16,7 @@
 			"recurrence": {
 				"frequency": "Day",
 				"interval": 1,
-				"startTime": "2020-11-16T17:15:00Z",
-				"endTime": "2020-11-16T18:15:00Z",
+				"startTime": "2020-11-17T22:01:00Z",
 				"timeZone": "UTC"
 			}
 		}
