@@ -919,7 +919,7 @@
 						"type": "SqlServerStoredProcedure",
 						"dependsOn": [
 							{
-								"activity": "Log changes",
+								"activity": "Copy to dim_product staging table",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -962,47 +962,6 @@
 						"userProperties": [],
 						"typeProperties": {
 							"storedProcedureName": "[[KPI].[load_F_Master]"
-						},
-						"linkedServiceName": {
-							"referenceName": "LN_SQL_DevDatahub",
-							"type": "LinkedServiceReference"
-						}
-					},
-					{
-						"name": "Log changes",
-						"type": "SqlServerStoredProcedure",
-						"dependsOn": [
-							{
-								"activity": "Copy to dim_product staging table",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"policy": {
-							"timeout": "7.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"storedProcedureName": "[[KPI].[CaptureChanges]",
-							"storedProcedureParameters": {
-								"MainTable": {
-									"value": "F_Master",
-									"type": "String"
-								},
-								"Schema": {
-									"value": "KPI",
-									"type": "String"
-								},
-								"StagingTable": {
-									"value": "stg_F_Master",
-									"type": "String"
-								}
-							}
 						},
 						"linkedServiceName": {
 							"referenceName": "LN_SQL_DevDatahub",
