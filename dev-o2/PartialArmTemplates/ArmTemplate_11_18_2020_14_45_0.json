@@ -1,0 +1,741 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "dev-o2"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/Load KPI to Datastore')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy to fact staging table",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Truncate all staging tables",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": "WITH ContractEventLinks AS \n(\n\tSELECT \n\t\tContractID\n\t\t,EventTypeID\n\t\t,EventDateTime \n\tFROM [Evolution].[Crm].[ContractEventLink]  \n\tWHERE EventTypeID IN (3, 4)\n)\n,ContractCosts AS\n(\n\tSELECT\n\t\tContractProductID\n\t\t,CostTypeID\n\t\t,Amount\n\t\t,AffectsHardwareFund\n\t\t,RecurrenceCount\n\tFROM [Evolution].[Crm].[ContractCost] \n\tWHERE RemovedDate IS NULL AND (CostTypeID IN (8, 2, 9, 34, 35, 36, 37, 38, 39) OR AffectsHardwareFund = 1)\n)\n,SBIDates AS\n(\n\tSELECT\n\t\tUSI\n\t\t,MPN\n\t\t,rp.AccountNumber\n\t\t,MAX(p.PeriodDate) SBIDate\n\tFROM [Evolution].[SBI].[Period] p \n\tINNER JOIN [Evolution].[SBI].[FileGroup] fg  ON p.PeriodID = fg.PeriodID\n\tINNER JOIN [Evolution].[SBI].[File] f  ON fg.FileGroupID = f.FileGroupID\n\tINNER JOIN [Evolution].[SBI].[Summary] s  ON s.FileID = f.FileID\n\tINNER JOIN [Evolution].[SBI].[RevsharePayment] rp  ON rp.SummaryID = s.SummaryID\n\tGROUP BY USI, MPN, rp.AccountNumber\n)\n,Tariffs AS\n(\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,pr.ProductID\n\t\t,pr.[Name] AS ProductName\n\t\t,gr.[Name] AS ProductGroup\n\t\t,tt.Term\n\t\t,dp.RevsharePct\n\t\t,dp.UpgradeTariff\n\t\t,ta.Legacy\n\t\t,pt.Name ProductType\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tINNER JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tINNER JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\tleft join [Evolution].crm.TariffTerm tt on tt.TariffTermID = pr.TariffTermID\n\tINNER JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\tAND gr.ProductTypeID = 1\n\tleft join [Evolution].Product.Type pt on pt.TypeID = gr.ProductTypeID\n\n\tLEFT JOIN --get the most recent version of tariff(?)\n\t(\n\t\tSELECT\n\t\tTariffCode, PackageCode, Legacy, ROW_NUMBER() OVER (PARTITION BY TariffCode, PackageCode ORDER BY TariffID DESC) AS RowNum\n\t\tFROM Evolution.EService.Tariff \n\t\tWHERE [Version] = (SELECT TOP 1 [Version] FROM Evolution.EService.Tariff  WHERE [Version] IS NOT NULL ORDER BY 1 DESC)\n\t) ta ON ta.TariffCode = dp.TariffCode AND ta.PackageCode = dp.PackageCode AND ta.RowNum = 1\n\tWHERE cp.RemovedDate IS NULL\n)\n,Funding as(\nselect \n\tContractID\n\t,cp.AddedDate\n\t, ft.Name  FundingType\n\t,ft.FundingTypeID\nfrom [Evolution].[Crm].[ContractProduct] cp\nleft join Evolution.[Financial].[FundingType] ft on ft.FundingTypeID = cp.FundingTypeID\nwhere ft.Disabled != 1\nand cp.FundingTypeID <> 5 --not a tariff\nand cp.RemovedDate is null\nand cp.ParentContractProductID is null --most recent funding for contract\n--and cp.pro\n),\nBonuses as(\nSELECT * FROM \n(\n\tselect \n\t\tcc.ContractProductID --changed this\n\t\t,case \n\t\t\twhen cc.CostTypeID IN (34,35,36) then  'VolumeBonus'\n\t\t\telse ct.Name end as BonusType\n\t\t,cc.amount\n\tfrom [Evolution].[Crm].[ContractCost] cc\n\tleft join [Evolution].[Financial].[CostType] ct on cc.CostTypeID = ct.CostTypeID\n)T\nPIVOT(\n\tSUM(AMOUNT)\n\tFOR BonusType IN (\n\t[Advance]\n\t,[Revshare]\n\t,[VolumeBonus]\n\t,[Churn Bonus]\n\t,[Digital Bonus]\n\t,[CSI Bonus]\n\t,[Resign Bonus]\n\t,[Monthly Cost]\n\t,[Advance Recovery]\n\t,[Finance Deposit]\n\t) \n)AS PIVOT_TABLE\n\n)\n, preAgg AS (\n\n\n\tSELECT  \n\t\tc.ContractID\n\t\t,c.CustomerID\n\t\t,ct.Name CustomerType\n\t\t,try_cast(c.ContractNumber as BIGINT) [MPN]\n\t\t,c.SalesPersonEmployeeID\n\t\t,case when tt.ConnectionTypeID = 8 then 1 else 0 end as VoiceTarrif\n\t\t,c.DateSold\n\t\t,cd.DateCompleted\n\t\t,concat(g.Name,' - ',ps.Name) [GradeStatus]\n\t\t,e.EmployeeID\n\t\t,CONCAT(e.FirstName,' ',e.LastName) SalesPersonName\n\t\t,d.Name departmentName\n\t\t,t.RevsharePCT\n\t\t,case \n\t\t\twhen t.RevsharePCT = 35.00 then 'PROMO' \n\t\t\twhen t.RevsharePct = 48.00 then  'SIMO'\n\t\t\twhen t.RevsharePct = 56.00 then 'Advanceable'\n\t\t\telse 'Unmapped'\n\t\tend as TariffGroup\n\t\t,case \n\t\t\twhen t.RevsharePCT = 56.00 then 1 \n\t\t\telse 0 \n\t\tend as isAdvanceable\n\t\t,COC.Code CostCenterCode\n\t\t,case \n\t\t\twhen COC.Code = 'NWR' then 'New World Revenue'\n\t\t\twhen coc.code = 'RET' then 'Retentions'\n\t\t\twhen coc.code = 'REN' then 'Renewals'\n\t\t\twhen coc.code = 'NCN' then 'New Connections'\n\t\t\twhen coc.code = 'REF' then 'Refresh'\n\t\t\twhen coc.code = 'LOW' then 'Low Spend'\n\t\t\twhen coc.code = 'BIZ' then 'Business Upgrades'\n\t\t\twhen coc.code = 'CUS' THEN 'Customer Services'\n\t\t\telse 'Unmapped'\n\t\tEND AS SalesTeam\n\t\t,tt.Name TariffType\n\t\t,case\n\t\t\twhen tt.Name like '%Voice%' then 'Voice'\n\t\t\twhen tt.Name like '%Data%' then 'Data'\n\t\t\twhen tt.Name like '%Fixed Line Services%' then 'Fixed Line'\n\t\t\twhen tt.Name like 'Additional' then tt.Name\n\t\t\twhen tt.Name like 'Cloud Service' then 'Digital'\n\t\t\telse 'Unmapped'\n\t\tEND AS TariffCategory\n\t\t,case\n\t\t\twhen ct.Name = 'SOHO' then 'Core Mobile'\n\t\t\twhen ct.Name = 'Mid-Market & Enterprise' then 'Midmarket'\n\t\t\telse 'Other'\n\t\tend as BusinessUnit\n\t,t.ProductID\n\t,t.Term ProductTerm\n\t,c.contractTerm\n\t,dl.Name DealerName\n\t,f.FundingType\n\t,B.[Advance]\n\t,B.[Revshare]\n\t,b.[Monthly Cost]\n\t,B.[VolumeBonus]\n\t,B.[Churn Bonus]\n\t,B.[Digital Bonus]\n\t,B.[CSI Bonus]\n\t,B.[Resign Bonus]\n\t,B.[Advance Recovery]\n\t,B.[Finance Deposit]\n\t,CC.RecurrenceCount\n\n\tFROM Evolution.[Crm].[Contract] c\n\t\n\tleft join Evolution.crm.customer cu \n\t\ton cu.CustomerID = c.CustomerID\n\t\n\tleft join Evolution.[Crm].[CustomerType] ct \n\t\ton ct.CustomerTypeID = cu.CustomerTypeID\n\n\tleft JOIN [Evolution].[Crm].[Dealer] dl  \n\t\tON dl.DealerID = ct.DealerID\n\t\n\tleft join [Datastore].[Store].[ContractDate] cd \n\t\ton cd.ContractID = c.ContractID\n\t\n\tleft join Evolution.[HR].[Employee] e \n\t\ton e.EmployeeID = c.SalesPersonEmployeeID\n\t\n\tleft join Evolution.[HR].[Employee] am\n\t\ton AM.EmployeeID = c.SalesPersonEmployeeID\n\t\n\tleft join [Evolution].[HR].[EmployeeDepartmentLink] edl \n\t\ton edl.EmployeeID = e.EmployeeID\n\t\tand edl.StartDate <= c.DateSold\n\t\tand (edl.EndDate is null or edl.EndDate > c.DateSold) --which department was the employee in at the point of sale\n\t\n\tleft join Evolution.hr.Department d \n\t\ton edl.DepartmentID = d.DepartmentID\n\t\n\tLEFT JOIN [Evolution].[Financial].[CostCentre]\tCOC \n\t\tON\tCOC.CostCentreID = D.CostCentreID\t\t\t\t\t\t\t\t\t\t\t\t\n\t\n\tleft join Tariffs t \n\t\ton t.ContractID = c.ContractID\n\t\n\tleft join ContractCosts CC \n\t\ton CC.ContractProductID = t.ContractProductID\n\t\tand CostTypeID =  9\n\n\n\t\n\tleft join [Evolution].[Crm].[TariffType] tt \n\t\ton tt.TariffTypeID = c.TariffTypeID\n\t\n\tleft join [Evolution].[Crm].[ProvisioningStatus] PS\n\t\ton ps.ProvisioningStatusID = c.ProvisioningStatusID\n\t\n\tleft JOIN [Evolution].[Crm].[Grade] g\n\t\tON g.GradeID = ps.GradeID\n\n\tLEFT JOIN Funding F\n\t\tON F.ContractID = c.ContractID\n\tLEFT JOIN Bonuses B\n\t\tON B.ContractProductID = t.ContractProductID --changed this\n\n\n\n\n\twhere c.DateSold >=  dateadd(month,-3,getdate())\n\tand c.ContractID != 50452488\n)\nSELECT * FROM preAgg",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ContractID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ContractID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "CustomerID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CustomerType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "MPN",
+											"type": "Int64"
+										},
+										"sink": {
+											"name": "MPN",
+											"type": "Int64"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesPersonEmployeeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "SalesPersonEmployeeID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "VoiceTarrif",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "VoiceTarrif",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "DateSold",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "DateSold",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "DateCompleted",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "DateCompleted",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "GradeStatus",
+											"type": "String"
+										},
+										"sink": {
+											"name": "GradeStatus",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "EmployeeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "EmployeeID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesPersonName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesPersonName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "departmentName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "departmentName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "RevsharePCT",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "RevsharePCT",
+											"type": "Decimal"
+										}
+									},
+									{
+										"source": {
+											"name": "TariffGroup",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TariffGroup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "isAdvanceable",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "isAdvanceable",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "CostCenterCode",
+											"type": "String"
+										},
+										"sink": {
+											"name": "CostCenterCode",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "SalesTeam",
+											"type": "String"
+										},
+										"sink": {
+											"name": "SalesTeam",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TariffType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TariffType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "TariffCategory",
+											"type": "String"
+										},
+										"sink": {
+											"name": "TariffCategory",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "BusinessUnit",
+											"type": "String"
+										},
+										"sink": {
+											"name": "BusinessUnit",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProductID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductTerm",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProductTerm",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "contractTerm",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "contractTerm",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "DealerName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "DealerName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "FundingType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "FundingType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "Advance",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Advance",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "Revshare",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Revshare",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "VolumeBonus",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "VolumeBonus",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "Churn Bonus",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Churn Bonus",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "Digital Bonus",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Digital Bonus",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "CSI Bonus",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "CSI Bonus",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "Resign Bonus",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Resign Bonus",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "Advance Recovery",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Advance Recovery",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "Finance Deposit",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Finance Deposit",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "RecurrenceCount",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "RecurrenceCount",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "Monthly Cost",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "Monthly Cost",
+											"type": "Double"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "LiveOnPremSQLGeneric",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dest_azure_dev_stg_fact_master",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Truncate all staging tables",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[KPI].[Truncate_KPI_Staging]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Copy to dim_product staging table",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Copy to fact staging table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlServerSource",
+								"sqlReaderQuery": ";with finances as \n(\nSELECT * FROM \n(\n\tselect \n\t\tcc.ContractProductID --changed this\n\t\t,cc.ContractID\n\t\t,case \n\t\t\twhen cc.CostTypeID IN (34,35,36) then  'VolumeBonus'\n\t\t\telse ct.Name end as BonusType\n\t\t,cc.amount\n\tfrom [Evolution].[Crm].[ContractCost] cc\n\tleft join [Evolution].[Financial].[CostType] ct on cc.CostTypeID = ct.CostTypeID\n\twhere cc.ContractProductID is null\n)T\nPIVOT(\n\tSUM(AMOUNT)\n\tFOR BonusType IN (\n\t[Customer Card Payment]\n\t,[Finance Deposit]\n\t,[Buy Out Cost]\n\t) \n)AS PIVOT_TABLE\n), \nmostRecentDispatch AS (\n\nSELECT\n\tDO.*\n\t,DOL.ContractProductID\n\t,ROW_NUMBER()over(partition by DOL.contractproductid order by DO.DateLastUpdated desc) rn\n\t,do.DateCreated DispatchCreated\nFROM product.DispatchOrder DO\nleft join product.DispatchOrderLine dol on do.DispatchOrderID  =dol.DispatchOrderID\nleft join [Product].[DispatchStatus] ds on ds.DispatchStatusID = do.DispatchStatusID\n--WHERE DO.DispatchStatusID <> 7\nwhere ContractProductID is not null\n)\n\n,pre as (\n\tSELECT\n\t\tcp.ContractID\n\t\t,cp.ContractProductID\n\t\t,cp.AddedDate\n\t\t,pr.ProductID\n\t\t,pr.Name ProductName\n\t\t,gr.ProductTypeID\n\t\t,PT.Name ProductType \n\t\t,gr.Name ProductGroup\n\t\t,f.[Customer Card Payment] as CustomerCardPayment\n\t\t,f.[Finance Deposit] as FinanceDeposit\n\t\t,f.[Buy Out Cost] as BuyOutCost\n\t\t,ds.Status as DispatchStatus\n\t\t,ds.DispatchCreated\n\tFROM [Evolution].[Crm].[ContractProduct] cp \n\tleft JOIN [Evolution].[Product].[DistributorProduct] dp  ON dp.DistributorProductID = cp.DistributorProductID\n\tleft JOIN [Evolution].[Product].[Product] pr  ON pr.ProductID = dp.ProductID\n\tleft JOIN [Evolution].[Product].[Group] gr  ON gr.GroupID = pr.GroupID \n\t\t\t\t\t\t\t\t\t\t\t\t--AND gr.ProductTypeID = 2\n\tinner join Evolution.[Product].[Type] pt ON PT.TypeID = GR.ProductTypeID\n\tleft join finances f on f.ContractID = cp.ContractID\n\tleft join mostRecentDispatch ds on ds.ContractProductID = cp.ContractProductID\n\t\t\t\t\t\t\t\t\tand ds.rn = 1\n\twhere cp.RemovedDate is null\n\t--and cp.ContractID = 50437758\n\tand cp.addedDate >= '2018-01-01 00:00:00.000'\n\n\n\t) \n\t--select ContractID, ContractProductID, count(*) from pre\n\t--where producttypeid = 2 \n\t--group by ContractID, ContractProductID\n\t--having count(*) > 1\n\tselect * from pre  \n",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"sink": {
+								"type": "AzureSqlSink"
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "ContractID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ContractID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ContractProductID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ContractProductID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "AddedDate",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "AddedDate",
+											"type": "DateTime"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProductID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductName",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductName",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductType",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductType",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductGroup",
+											"type": "String"
+										},
+										"sink": {
+											"name": "ProductGroup",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "ProductTypeID",
+											"type": "Int32"
+										},
+										"sink": {
+											"name": "ProductTypeID",
+											"type": "Int32"
+										}
+									},
+									{
+										"source": {
+											"name": "CustomerCardPayment",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "CustomerCardPayment",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "FinanceDeposit",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "FinanceDeposit",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "BuyOutCost",
+											"type": "Decimal"
+										},
+										"sink": {
+											"name": "BuyOutCost",
+											"type": "Double"
+										}
+									},
+									{
+										"source": {
+											"name": "DispatchStatus",
+											"type": "String"
+										},
+										"sink": {
+											"name": "DispatchStatus",
+											"type": "String"
+										}
+									},
+									{
+										"source": {
+											"name": "DispatchCreated",
+											"type": "DateTime"
+										},
+										"sink": {
+											"name": "DispatchCreated",
+											"type": "DateTime"
+										}
+									}
+								]
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "LiveOnPremSQLGeneric",
+								"type": "DatasetReference"
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "dest_azure_dev_stg_dim_products",
+								"type": "DatasetReference"
+							}
+						]
+					},
+					{
+						"name": "Merge to dim_handset",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Log changes",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[KPI].[load_dim_handset]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Merge to f_master",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Merge to dim_handset",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[KPI].[load_F_Master]"
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					},
+					{
+						"name": "Log changes",
+						"type": "SqlServerStoredProcedure",
+						"dependsOn": [
+							{
+								"activity": "Copy to dim_product staging table",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"storedProcedureName": "[[KPI].[CaptureChanges]",
+							"storedProcedureParameters": {
+								"MainTable": {
+									"value": "F_Master",
+									"type": "String"
+								},
+								"Schema": {
+									"value": "KPI",
+									"type": "String"
+								},
+								"StagingTable": {
+									"value": "stg_F_Master",
+									"type": "String"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "LN_SQL_DevDatahub",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"variables": {
+					"Fact_rows": {
+						"type": "String"
+					},
+					"product_rows": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Dev_KPI"
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		}
+	]
+}
