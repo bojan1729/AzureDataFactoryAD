@@ -3,13 +3,21 @@
 	"properties": {
 		"annotations": [],
 		"runtimeState": "Started",
-		"pipelines": [],
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "PICDR Main Run Par Agg Inc Sch",
+					"type": "PipelineReference"
+				}
+			}
+		],
 		"type": "ScheduleTrigger",
 		"typeProperties": {
 			"recurrence": {
 				"frequency": "Day",
 				"interval": 1,
 				"startTime": "2020-11-17T22:01:00Z",
+				"endTime": "2020-11-18T08:00:00Z",
 				"timeZone": "UTC"
 			}
 		}
