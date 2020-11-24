@@ -335,7 +335,7 @@
 											},
 											"enableStaging": false,
 											"enableSkipIncompatibleRow": true,
-											"validateDataConsistency": false,
+											"validateDataConsistency": true,
 											"translator": {
 												"type": "TabularTranslator",
 												"typeConversion": true,
