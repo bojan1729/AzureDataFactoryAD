@@ -134,7 +134,7 @@
 					"source": {
 						"type": "AzureSqlSource",
 						"sqlReaderQuery": {
-							"value": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileType = 3 AND FileRefID = 'Qj5wzz2Yec8---3d'",
+							"value": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileType = 3 AND FileRefID = 'nVgMqozkjuA---3d'",
 							"type": "Expression"
 						},
 						"queryTimeout": "02:00:00",
