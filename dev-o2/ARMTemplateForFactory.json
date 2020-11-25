@@ -13960,6 +13960,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -14028,7 +14029,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -14265,6 +14269,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -14333,7 +14338,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -15228,6 +15236,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -15296,7 +15305,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -15533,6 +15545,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -15601,7 +15614,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -16646,6 +16662,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -16714,7 +16731,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -16951,6 +16971,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -17019,7 +17040,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -17914,6 +17938,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -17982,7 +18007,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -18219,6 +18247,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -18287,7 +18316,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -19332,6 +19364,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -19400,7 +19433,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -19637,6 +19673,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -19705,7 +19742,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -20839,6 +20879,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -20907,7 +20948,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -21144,6 +21188,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -21212,7 +21257,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -22496,6 +22544,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -22564,7 +22613,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -22801,6 +22853,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -22869,7 +22922,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -23764,6 +23820,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -23832,7 +23889,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -24069,6 +24129,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -24137,7 +24198,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -25182,6 +25246,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -25250,7 +25315,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -25487,6 +25555,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -25555,7 +25624,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -26450,6 +26522,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -26518,7 +26591,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -26755,6 +26831,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -26823,7 +26900,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -27868,6 +27948,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -27936,7 +28017,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -28173,6 +28257,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -28241,7 +28326,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -29136,6 +29224,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -29204,7 +29293,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -29441,6 +29533,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -29509,7 +29602,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -30554,6 +30650,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -30622,7 +30719,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -30859,6 +30959,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -30927,7 +31028,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -31822,6 +31926,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -31890,7 +31995,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Cleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Cleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -32127,6 +32235,7 @@
 														"type": "AzureSqlSink"
 													},
 													"enableStaging": false,
+													"enableSkipIncompatibleRow": true,
 													"translator": {
 														"type": "TabularTranslator",
 														"typeConversion": true,
@@ -32195,7 +32304,10 @@
 															"type": "String"
 														},
 														"ErrorMessage": {
-															"value": null,
+															"value": {
+																"value": "@if(equals(activity('Load Stage - Uncleaned').output.rowsSkipped,0), NULL, concat('Rows skipped: ', activity('Load Stage - Uncleaned').output.rowsSkipped))",
+																"type": "Expression"
+															},
 															"type": "String"
 														},
 														"FileName": {
@@ -34297,7 +34409,7 @@
 							"source": {
 								"type": "AzureSqlSource",
 								"sqlReaderQuery": {
-									"value": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileType = 3 AND FileRefID = 'Qj5wzz2Yec8---3d'",
+									"value": "SELECT * FROM [staging].[FileLoadDefinition]\nWHERE FileType = 3 AND FileRefID = 'nVgMqozkjuA---3d'",
 									"type": "Expression"
 								},
 								"queryTimeout": "02:00:00",
